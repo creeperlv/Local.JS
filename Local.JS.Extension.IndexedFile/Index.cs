@@ -21,8 +21,16 @@ namespace Local.JS.Extension.IndexedFile
         [JsonIgnore]
         public string ParentInstallation;
         [JsonIgnore]
-        public FileInfo CoreFile { get {
-                return new FileInfo(Path.Combine(BasePath, ParentInstallation, RealLocation));
+        public FileInfo CoreFile
+        {
+            get
+            {
+                if (File.Exists(RealLocation))
+                {
+                    return new FileInfo(RealLocation);
+                }
+                else
+                    return new FileInfo(Path.Combine(BasePath, ParentInstallation, RealLocation));
             }
         }
         public static void Init(string Manifest)
@@ -49,11 +57,29 @@ namespace Local.JS.Extension.IndexedFile
                 Installation00.PresentingInstallations.Add(installation);
             }
         }
+        public static List<Index> List(string PsesudoLocation)
+        {
+            List<Index> indices = new List<Index>();
+            PsesudoLocation = UnifyPseudoLocation(PsesudoLocation);
+            PsesudoLocation = DirecotrizeLocation(PsesudoLocation);
+            foreach (var item in Installation00.PresentingInstallations)
+            {
+                foreach (var _index in item.Indices)
+                {
+                    if (_index.PseudoLocation.ToUpper().StartsWith(PsesudoLocation.ToUpper()))
+                    {
+                        _index.ParentInstallation = item.FolderID;
+                        indices.Add(_index);
+                    }
+                }
+            }
+            return indices;
+        }
         public static Index Get(string PsesudoLocation)
         {
 
             Index index = null;
-            var l = PsesudoLocation.ToUpper();
+            var l = UnifyPseudoLocation(PsesudoLocation).ToUpper();
             foreach (var item in Installation00.PresentingInstallations)
             {
                 foreach (var _index in item.Indices)
@@ -67,44 +93,54 @@ namespace Local.JS.Extension.IndexedFile
             }
             return index;
         }
-        //public static void StoreRef(string RealFile, string PsesudoLocation)
-        //{
-        //    StoreRef(new FileInfo(RealFile), PsesudoLocation);
-        //}
-        //public static void StoreRef(FileInfo fi, string PsesudoLocation)
-        //{
-        //    var installation = Installation00.GetInstallation();
-        //    var fileID = Guid.NewGuid();
-        //    if (installation == Installation.Empty)
-        //    {
-        //        installation = new Installation();
-        //        installation.FolderID = Guid.NewGuid().ToString();
-        //        installation.Modified = true;
-        //        var folder = Path.Combine(BasePath, installation.FolderID);
-        //        if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
-        //        Index index = new Index();
-        //        index.RealLocation = fi.FullName;
-        //        index.PseudoLocation = PsesudoLocation;
-        //        installation.Indices.Add(index);
-        //        Installation00.PresentingInstallations.Add(installation);
-        //        TheArk.Installations.Add(installation.FolderID);
-        //        SaveIndeics();
-        //    }
-        //    else
-        //    {
-        //        installation.Modified = true;
-        //        Index index = new Index();
-        //        index.RealLocation = fi.FullName;
-        //        index.PseudoLocation = PsesudoLocation;
-        //        installation.Indices.Add(index);
-        //    }
-        //}
+        public static string DirecotrizeLocation(string Location)
+        {
+            if (Location.EndsWith('/')) return Location; else return (Location + "/");
+        }
+        public static string UnifyPseudoLocation(string Location)
+        {
+            return Location.Replace("\\", "/");
+        }
+        public static void StoreRef(string RealFile, string PsesudoLocation)
+        {
+            StoreRef(new FileInfo(RealFile), PsesudoLocation);
+        }
+        public static void StoreRef(FileInfo fi, string PsesudoLocation)
+        {
+            var installation = Installation00.GetInstallation();
+            var fileID = Guid.NewGuid();
+            PsesudoLocation = UnifyPseudoLocation(PsesudoLocation);
+            if (installation == Installation.Empty)
+            {
+                installation = new Installation();
+                installation.FolderID = Guid.NewGuid().ToString();
+                installation.Modified = true;
+                var folder = Path.Combine(BasePath, installation.FolderID);
+                if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
+                Index index = new Index();
+                index.RealLocation = fi.FullName;
+                index.PseudoLocation = PsesudoLocation;
+                installation.Indices.Add(index);
+                Installation00.PresentingInstallations.Add(installation);
+                TheArk.Installations.Add(installation.FolderID);
+                SaveIndeics();
+            }
+            else
+            {
+                installation.Modified = true;
+                Index index = new Index();
+                index.RealLocation = fi.FullName;
+                index.PseudoLocation = PsesudoLocation;
+                installation.Indices.Add(index);
+            }
+        }
         public static void StoreCpy(string RealFile, string PsesudoLocation)
         {
             StoreCpy(new FileInfo(RealFile), PsesudoLocation);
         }
         public static void StoreCpy(FileInfo fi, string PsesudoLocation)
         {
+            PsesudoLocation = UnifyPseudoLocation(PsesudoLocation);
             var installation = Installation00.GetInstallation();
             var fileID = Guid.NewGuid();
             if (installation == Installation.Empty)
@@ -136,8 +172,8 @@ namespace Local.JS.Extension.IndexedFile
         }
         public static void DeleteFile(string PsesudoLocation)
         {
-            var index=Get(PsesudoLocation);
-            if(index is not null)
+            var index = Get(PsesudoLocation);
+            if (index is not null)
             {
                 index.CoreFile.Delete();
                 var installation = Installation00.FindInstallation(index.ParentInstallation);

@@ -20,7 +20,7 @@ They are:
 
 -Local.JS.Extension.IndexedFile - A simple index to files, help organizing files.
 
--Local.JS.Extension.WebServer - A simple web server that uses HttpListener as its backend. This server uses delegate-callback and `Local.JS.Extension.BatchedMultiTask` to help balancing the load of the server.
+-Local.JS.Extension.HttpServer - A simple web server that uses HttpListener as its backend. This server uses delegate-callback and `Local.JS.Extension.BatchedMultiTask` to help balancing the load of the server.
 
 ## Samples
 

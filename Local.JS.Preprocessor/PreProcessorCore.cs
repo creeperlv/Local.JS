@@ -13,7 +13,8 @@ namespace Local.JS.Preprocessor
         public string Name;
         public string Author;
         public Version Version;
-        public List<string> UsingDLLs;
+        public List<string> Flags = new List<string>();
+        public List<string> UsingDLLs = new List<string>();
 
     }
     public class PreProcessorCore
@@ -36,7 +37,7 @@ namespace Local.JS.Preprocessor
             if (Usings is not null) this.Usings = new DirectoryInfo[0];
             else this.Usings = Usings;
         }
-        JSInfo info=null;
+        JSInfo info = null;
         public JSInfo GetInfo() => info;
         public FileInfo FindJS(string Name)
         {
@@ -61,6 +62,7 @@ namespace Local.JS.Preprocessor
         internal string RealProcess(string[] lines, bool isMainFile)
         {
             StringBuilder stringBuilder = new StringBuilder();
+            bool isIgnore = false;
             for (int i = 0; i < lines.Length; i++)
             {
                 var item = lines[i];
@@ -83,13 +85,49 @@ namespace Local.JS.Preprocessor
                                     }
                                     //Pre-Combine JavaScript Codes.
                                 }
+                                else
+                                if (m0.RealParameter[1].EntireArgument.ToUpper() == "DLL")
+                                {
+                                    info.UsingDLLs.Add(m0.RealParameter[2]);
+                                }
+                            }
+                            break;
+                        case "IFDEF":
+                            {
+                                foreach (var flag in info.Flags)
+                                {
+                                    if (m0.RealParameter[1].EntireArgument == flag)
+                                    {
+                                        isIgnore = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            break;
+                        case "ENDIF":
+                            {
+                                isIgnore = false;
+                            }
+                            break;
+                        case "IFNDEF":
+                            {
+                                isIgnore = true;
+                                foreach (var flag in info.Flags)
+                                {
+                                    if (m0.RealParameter[1].EntireArgument == flag)
+                                    {
+                                        isIgnore = false;
+                                        break;
+                                    }
+                                }
                             }
                             break;
                         default:
                             break;
                     }
                 }
-                stringBuilder.Append(item);
+                if (isIgnore is not true)
+                    stringBuilder.Append(item);
             }
             return stringBuilder.ToString();
         }

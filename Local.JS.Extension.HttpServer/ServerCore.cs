@@ -21,10 +21,10 @@ namespace Local.JS.Extension.SimpleHttpServer
         static List<string> Addresses = new();
         static int MaxJobs = 0;
         static Action<Exception> a = (e) => { Console.WriteLine(e); };
-        static Delegate ExceptionHandler=a;
-        static string _ServerName = "Local.JS.Extension.SimpleHttpServer";
-        public static string ServerName { get=>_ServerName; }
-        public static void SetExceptionHandler(Delegate ExceptionHandler)
+        static string ExceptionHandler = null;
+        static string _ServerName = "Local.JS.Extension.HttpServer";
+        public static string ServerName { get => _ServerName; }
+        public static void SetExceptionHandler(string ExceptionHandler)
         {
             ServerCore.ExceptionHandler = ExceptionHandler;
         }
@@ -58,9 +58,9 @@ namespace Local.JS.Extension.SimpleHttpServer
         }
         public static void ApplySettings()
         {
-            _ServerName += "/"+typeof(ServerCore).Assembly.GetName().Version;
-               httpListener = new HttpListener();
-            tg = TaskGroup.CreateTaskGroup(MaxJobs, (a) => { ExceptionHandler.DynamicInvoke(a); });
+            _ServerName += "/" + typeof(ServerCore).Assembly.GetName().Version;
+            httpListener = new HttpListener();
+            tg = TaskGroup.CreateTaskGroup(MaxJobs, (a) => { if (ExceptionHandler is not null) { ExecutingEngine.Invoke(ExceptionHandler, a); } else { Console.WriteLine(a); } });
             foreach (var item in Addresses)
             {
                 httpListener.Prefixes.Add(item);
@@ -87,7 +87,7 @@ namespace Local.JS.Extension.SimpleHttpServer
                         }
                         else
                         {
-                            SendMessage(c,"<html><body><p>Local.JS</p></body></html>","text/html");
+                            SendMessage(c, "<html><body><p>Local.JS</p></body></html>", "text/html");
                         }
                     }));
                 }
@@ -141,7 +141,7 @@ namespace Local.JS.Extension.SimpleHttpServer
                 else
                 {
                     var Presudo = index.PseudoLocation.ToUpper();
-                    if (Presudo.EndsWith(".HTM")|| Presudo.EndsWith(".HTML"))
+                    if (Presudo.EndsWith(".HTM") || Presudo.EndsWith(".HTML"))
                     {
                         context.Response.ContentType = "text/html";
                     }

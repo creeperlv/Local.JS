@@ -86,6 +86,8 @@ namespace Local.JS
             {
                 PreProcessorCore preProcessorCore = new PreProcessorCore(RealContent, new DirectoryInfo(Environment.CurrentDirectory), null);
                 RealContent = preProcessorCore.Process();
+                var info = preProcessorCore.GetInfo();
+
             }
             localJSCore.AppendProgramSegment(RealContent);
             localJSCore.ExposeType("Console", typeof(Console));
