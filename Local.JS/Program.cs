@@ -8,6 +8,7 @@ using CLUNL.Utilities;
 using Jint;
 using Local.JS.Extension.BatchedMultiTask;
 using Local.JS.Extension.SimpleHttpServer;
+using Local.JS.Preprocessor;
 using Newtonsoft.Json;
 
 namespace Local.JS
@@ -18,7 +19,7 @@ namespace Local.JS
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;
-            bool SkipPreprocess=true;
+            bool SkipPreprocess = true;
             string EntryPoint = null;
             StringBuilder Content = new();
             List<Assembly> assemblies = new();
@@ -51,10 +52,12 @@ namespace Local.JS
                     item = args[i + 1];
                     EntryPoint = item;
                     i++;
-                }else if (item.ToUpper() == "--NOPREPROCESS")
+                }
+                else if (item.ToUpper() == "--NOPREPROCESS")
                 {
                     SkipPreprocess = true;
-                }else if (item.ToUpper() == "--FORCEPREPROCESS")
+                }
+                else if (item.ToUpper() == "--FORCEPREPROCESS")
                 {
                     SkipPreprocess = false;
                 }
@@ -78,11 +81,13 @@ namespace Local.JS
                 }
             }
             LocalJSCore localJSCore = new LocalJSCore(assemblies.ToArray());
+            string RealContent = Content.ToString();
             if (SkipPreprocess == false)
             {
-
+                PreProcessorCore preProcessorCore = new PreProcessorCore(RealContent, new DirectoryInfo(Environment.CurrentDirectory), null);
+                RealContent = preProcessorCore.Process();
             }
-            localJSCore.AppendProgramSegment(Content.ToString());
+            localJSCore.AppendProgramSegment(RealContent);
             localJSCore.ExposeType("Console", typeof(Console));
             localJSCore.ExposeType("ServerCore", typeof(ServerCore));
             localJSCore.ExposeType("IndexedFile_Index", typeof(Extension.IndexedFile.Index));

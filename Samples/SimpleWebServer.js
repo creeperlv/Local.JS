@@ -1,9 +1,6 @@
 /// DEFINE NAME SampleStaticServer
 /// DEFINE VERSION 1.0.0.0
 /// DEFINE AUTHOR Creeper Lv
-/// USING JS Part2.js
-/// USING DLL Local.JS.Extension.HttpServer.dll
-/// EXPOSE TYPE FileInfo System.IO.FileInfo
 function HttpHandler(context){
 	alert("Request:"+context.Request.HttpMethod+">>"+context.Request.Url.AbsolutePath);
 	var index=IndexedFile_Index.Get(context.Request.Url.AbsolutePath.substring(1));
