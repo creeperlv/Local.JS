@@ -73,6 +73,32 @@ namespace Local.JS.Preprocessor
                     switch (m0.RealParameter[0].EntireArgument.ToUpper())
                     {
                         case "DEFINE":
+                            {
+                                var Key = m0.RealParameter[1].EntireArgument;
+                                switch (Key.ToUpper())
+                                {
+                                    case "NAME":
+                                        {
+                                            info.Name = m0.RealParameter[2].EntireArgument;
+                                        }
+                                        break;
+                                    case "AUTHOR":
+                                        {
+                                            info.Author = m0.RealParameter[2].EntireArgument;
+                                        }
+                                        break;
+                                    case "VERSION":
+                                        {
+                                            info.Version = new Version(m0.RealParameter[2].EntireArgument);
+                                        }
+                                        break;
+                                    default:
+                                        {
+                                            info.Flags.Add(Key);
+                                        }
+                                        break;
+                                }
+                            }
                             break;
                         case "USING":
                             {
@@ -143,19 +169,28 @@ namespace Local.JS.Preprocessor
             var lines = File.ReadAllLines(file.FullName);
             return RealProcess(lines, isMainFile);
         }
-        public string Process()
+        public string Process(List<string> PreDefinedFlags)
         {
             if (MainSourceFile is not null)
             {
                 info = new JSInfo();
+                if (PreDefinedFlags is not null)
+                    info.Flags = PreDefinedFlags;
                 return Process(MainSourceFile, true);
             }
             else if (ScriptContent is not null)
             {
                 info = new JSInfo();
+                if (PreDefinedFlags is not null)
+                    info.Flags = PreDefinedFlags;
                 return Process(ScriptContent, true);
             }
             else throw new Exception("No input");
+
+        }
+        public string Process()
+        {
+            return Process(new List<string>());
         }
     }
 }

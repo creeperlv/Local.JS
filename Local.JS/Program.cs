@@ -85,7 +85,14 @@ namespace Local.JS
             if (SkipPreprocess == false)
             {
                 PreProcessorCore preProcessorCore = new PreProcessorCore(RealContent, new DirectoryInfo(Environment.CurrentDirectory), null);
-                RealContent = preProcessorCore.Process();
+                List<string> Flags = new List<string>();
+#if DEBUG
+                Flags.Add("DEBUG");
+#endif
+#if RELEASE
+                Flags.Add("RELEASE");
+#endif
+                RealContent = preProcessorCore.Process(Flags);
                 var info = preProcessorCore.GetInfo();
 
             }
