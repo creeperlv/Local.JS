@@ -3,7 +3,7 @@
 /// DEFINE AUTHOR Creeper Lv
 function HttpHandler(context){
 	alert("Request:"+context.Request.HttpMethod+">>"+context.Request.Url.AbsolutePath);
-	var index=IndexedFile_Index.Get(context.Request.Url.AbsolutePath.substring(1));
+	var index=Index.Get(context.Request.Url.AbsolutePath.substring(1));
 	if(index==null){
 		ServerCore.SendMessage(context,"<html><head><title>404 Not Found</title></head><body><p>404 Not Found</p></body></html>");
 	}else{
@@ -14,7 +14,7 @@ function ExceptionHandler(e){
 	error(e);
 }
 function FileDatabaseInit(){
-	IndexedFile_Index.Init("./Files/TheArk.json");
+	Index.Init("./Files/TheArk.json");
 	pass("IndexedFile Database Inited.");
 }
 function Command(){
@@ -36,8 +36,8 @@ function Command(){
 					error("Wrong Argument.");
 					continue;
 				}
-				IndexedFile_Index.StoreCpy(item1,item2);
-				IndexedFile_Index.SaveIndeics();
+				Index.StoreCpy(item1,item2);
+				Index.SaveIndeics();
 			}catch(e){
 				error("Something Wrong:"+e);
 			}

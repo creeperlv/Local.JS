@@ -24,6 +24,7 @@ namespace Local.JS
             StringBuilder Content = new();
             List<Assembly> assemblies = new();
             List<string> parameters = new();
+            List<string> Flags = new List<string>();
             for (int i = 0; i < args.Length; i++)
             {
                 var item = args[i];
@@ -44,6 +45,13 @@ namespace Local.JS
                     {
                         assemblies.Add(Assembly.LoadFrom((new FileInfo(item)).FullName));
                     }
+                    i++;
+                }
+                else
+                if (item.ToUpper() == "-DEFINE"|| item.ToUpper() == "-DEF")
+                {
+                    item = args[i + 1];
+                    Flags.Add(item);
                     i++;
                 }
                 else
@@ -84,7 +92,6 @@ namespace Local.JS
             if (SkipPreprocess == false)
             {
                 PreProcessorCore preProcessorCore = new PreProcessorCore(RealContent, new DirectoryInfo(Environment.CurrentDirectory), null);
-                List<string> Flags = new List<string>();
 #if DEBUG
                 Flags.Add("DEBUG");
 #endif
@@ -126,7 +133,7 @@ namespace Local.JS
             localJSCore.AppendProgramSegment(RealContent);
             localJSCore.ExposeType("Console", typeof(Console));
             localJSCore.ExposeType("ServerCore", typeof(ServerCore));
-            localJSCore.ExposeType("IndexedFile_Index", typeof(Extension.IndexedFile.Index));
+            localJSCore.ExposeType("Index", typeof(Extension.IndexedFile.Index));
             localJSCore.ExposeMethod("alert", new Action<object>(Console.WriteLine));
             localJSCore.ExposeMethod("error", new Action<object>((o) => { Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine(o); Console.ResetColor(); }));
             localJSCore.ExposeMethod("warn", new Action<object>((o) => { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine(o); Console.ResetColor(); }));

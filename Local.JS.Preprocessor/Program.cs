@@ -11,6 +11,7 @@ namespace Local.JS.Preprocessor
             FileInfo MainSource = null;
             List<DirectoryInfo> di = new List<DirectoryInfo>();
             List<string> Flags = new List<string>();
+            string Output=null;
             for (int i = 0; i < args.Length; i++)
             {
                 var item = args[i];
@@ -31,7 +32,21 @@ namespace Local.JS.Preprocessor
                     MainSource = new FileInfo(item);
                 }
             }
+            if(Output is null)
+            {
+                Output = Path.Combine(MainSource.Directory.FullName, "_" + MainSource.Name);
+            }
+
             PreProcessorCore core = new PreProcessorCore(MainSource, di.ToArray());
+            var content=core.Process(Flags);
+            try
+            {
+                File.Delete(Output);
+            }
+            catch (Exception)
+            {
+            }
+            File.WriteAllText(content, Output);
         }
     }
 }

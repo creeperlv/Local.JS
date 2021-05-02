@@ -17,6 +17,15 @@ namespace Local.JS.Preprocessor
         public List<string> UsingDLLs = new List<string>();
 
     }
+    public class ProcessSettings
+    {
+        /// <summary>
+        /// Override settings about removing macros.
+        /// </summary>
+        public bool RemoveAllMacros = true;
+        public bool RemoveUsingJSMacro = true;
+        public bool RemoveDefineMacro = false;
+    }
     public class PreProcessorCore
     {
         FileInfo MainSourceFile = null;
