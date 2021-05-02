@@ -80,7 +80,6 @@ namespace Local.JS
                         parameters.Add(item);
                 }
             }
-            LocalJSCore localJSCore = new LocalJSCore(assemblies.ToArray());
             string RealContent = Content.ToString();
             if (SkipPreprocess == false)
             {
@@ -94,8 +93,36 @@ namespace Local.JS
 #endif
                 RealContent = preProcessorCore.Process(Flags);
                 var info = preProcessorCore.GetInfo();
-
+                List<FileInfo> fis = new List<FileInfo>();
+                foreach (var item in info.UsingDLLs)
+                {
+                    FileInfo fileInfo = new FileInfo(item);
+                    if (fileInfo.Exists)
+                    {
+                        bool Existed=false;
+                        foreach (var f in fis)
+                        {
+                            if (f.FullName == fileInfo.FullName)
+                            {
+                                Existed = true;
+                                break;
+                            }
+                        }
+                        if (Existed == false)
+                        {
+                            fis.Add(fileInfo);
+                        }
+                    }
+                }
+                foreach (var item in fis)
+                {
+                    if (item.Exists)
+                    {
+                        assemblies.Add(Assembly.LoadFrom(item.FullName));
+                    }
+                }
             }
+            LocalJSCore localJSCore = new LocalJSCore(assemblies.ToArray());
             localJSCore.AppendProgramSegment(RealContent);
             localJSCore.ExposeType("Console", typeof(Console));
             localJSCore.ExposeType("ServerCore", typeof(ServerCore));

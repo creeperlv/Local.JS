@@ -27,14 +27,14 @@ namespace Local.JS.Preprocessor
         {
             this.ScriptContent = ScriptContent;
             MainSourceFileDirectory = MainSourceDirectory;
-            if (Usings is not null) this.Usings = new DirectoryInfo[0];
+            if (Usings is null) this.Usings = new DirectoryInfo[0];
             else this.Usings = Usings;
         }
         public PreProcessorCore(FileInfo MainSource, DirectoryInfo[] Usings)
         {
             MainSourceFile = MainSource;
             MainSourceFileDirectory = MainSource.Directory;
-            if (Usings is not null) this.Usings = new DirectoryInfo[0];
+            if (Usings is null) this.Usings = new DirectoryInfo[0];
             else this.Usings = Usings;
         }
         JSInfo info = null;
@@ -69,7 +69,8 @@ namespace Local.JS.Preprocessor
                 if (item.Trim().StartsWith("///"))
                 {
                     //Macro
-                    var m0 = CommandLineTool.Analyze(item);
+                    var macro = item.Trim().Substring(3).Trim();
+                    var m0 = CommandLineTool.Analyze(macro);
                     switch (m0.RealParameter[0].EntireArgument.ToUpper())
                     {
                         case "DEFINE":
@@ -151,9 +152,13 @@ namespace Local.JS.Preprocessor
                         default:
                             break;
                     }
+                    continue;
                 }
                 if (isIgnore is not true)
+                {
                     stringBuilder.Append(item);
+                    stringBuilder.Append(Environment.NewLine);
+                }
             }
             return stringBuilder.ToString();
         }
