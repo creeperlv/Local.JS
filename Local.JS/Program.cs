@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CLUNL.Utilities;
 using Jint;
 using Local.JS.Extension.BatchedMultiTask;
+using Local.JS.Extension.IndexedFile;
 using Local.JS.Extension.SimpleHttpServer;
 using Local.JS.Preprocessor;
 using Newtonsoft.Json;
@@ -60,6 +61,15 @@ namespace Local.JS
                     item = args[i + 1];
                     EntryPoint = item;
                     i++;
+                }else if (item.ToUpper() == "--VERSION")
+                {
+                    Console.WriteLine("Local.JS:"+typeof(LocalJSCore).Assembly.GetName().Version);
+                    Console.WriteLine("Local.JS.Preprocessor:"+typeof(PreProcessorCore).Assembly.GetName().Version);
+                    Console.WriteLine("Local.JS.Extension.HttpServer:"+typeof(ServerCore).Assembly.GetName().Version);
+                    Console.WriteLine("Local.JS.Extension.IndexedFile:"+typeof(Extension.IndexedFile.Index).Assembly.GetName().Version);
+                    Console.WriteLine("Local.JS.Extension.BatchedMultiTask:"+typeof(TaskGroup).Assembly.GetName().Version);
+                    Console.WriteLine("Jint:"+typeof(Jint.Engine).Assembly.GetName().Version);
+                    return;
                 }
                 else if (item.ToUpper() == "--NOPREPROCESS")
                 {
