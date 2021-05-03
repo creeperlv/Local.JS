@@ -20,7 +20,8 @@ namespace Local.JS
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;
-            bool SkipPreprocess = true;
+            bool SkipPreprocess = false;
+            bool ShowInfo = false;
             string EntryPoint = null;
             StringBuilder Content = new();
             List<Assembly> assemblies = new();
@@ -70,6 +71,9 @@ namespace Local.JS
                     Console.WriteLine("Local.JS.Extension.BatchedMultiTask:"+typeof(TaskGroup).Assembly.GetName().Version);
                     Console.WriteLine("Jint:"+typeof(Jint.Engine).Assembly.GetName().Version);
                     return;
+                }else if (item.ToUpper() == "--VIEW-INFO")
+                {
+                    ShowInfo = true;
                 }
                 else if (item.ToUpper() == "--NOPREPROCESS")
                 {
@@ -110,6 +114,14 @@ namespace Local.JS
 #endif
                 RealContent = preProcessorCore.Process(Flags);
                 var info = preProcessorCore.GetInfo();
+                if (ShowInfo == true)
+                {
+                    Console.WriteLine(">>>>>>Module Info>>>>>>");
+                    Console.WriteLine("Name:"+info.Name);
+                    Console.WriteLine("Author:"+info.Author);
+                    Console.WriteLine("Version:"+info.Version);
+                    Console.WriteLine("<<<<<<Info End<<<<<<");
+                }
                 List<FileInfo> fis = new List<FileInfo>();
                 foreach (var item in info.UsingDLLs)
                 {
@@ -137,6 +149,16 @@ namespace Local.JS
                     {
                         assemblies.Add(Assembly.LoadFrom(item.FullName));
                     }
+                }
+            }
+            else
+            {
+
+                if (ShowInfo == true)
+                {
+                    Console.WriteLine(">>>>Warning>>>>");
+                    Console.WriteLine("No Info to View");
+                    Console.WriteLine("<<Warning End<<");
                 }
             }
             LocalJSCore localJSCore = new LocalJSCore(assemblies.ToArray());
