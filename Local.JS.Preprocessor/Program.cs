@@ -12,6 +12,7 @@ namespace Local.JS.Preprocessor
             List<DirectoryInfo> di = new List<DirectoryInfo>();
             List<string> Flags = new List<string>();
             string Output=null;
+            ProcessSettings settings = new ProcessSettings();
             for (int i = 0; i < args.Length; i++)
             {
                 var item = args[i];
@@ -20,6 +21,38 @@ namespace Local.JS.Preprocessor
                     di.Add(new DirectoryInfo(args[i + 1]));
                     i++;
 
+                }
+                else if (item.ToUpper() == "--REMOVE-ALL-MACROS")
+                {
+                    settings.RemoveAllMacros = true;
+                }
+                else if (item.ToUpper() == "--NOT-REMOVE-ALL-MACROS")
+                {
+                    settings.RemoveAllMacros = false;
+                }
+                else if (item.ToUpper() == "--REMOVE-USING-JS-MACRO")
+                {
+                    settings.RemoveUsingJSMacro = true;
+                }
+                else if (item.ToUpper() == "--NOT-REMOVE-USING-JS-MACRO")
+                {
+                    settings.RemoveUsingJSMacro = false;
+                }
+                else if (item.ToUpper() == "--REMOVE-DEFINE-MACRO")
+                {
+                    settings.RemoveDefineMacro = true;
+                }
+                else if (item.ToUpper() == "--NOT-REMOVE-DEFINE-MACRO")
+                {
+                    settings.RemoveDefineMacro = false;
+                }
+                else if (item.ToUpper() == "--PRESERVE-MODULE-INFO-MACRO")
+                {
+                    settings.PreserveModuleInfoMacro = true;
+                }
+                else if (item.ToUpper() == "--NOT-PRESERVE-MODULE-INFO-MACRO")
+                {
+                    settings.PreserveModuleInfoMacro = false;
                 }
                 else if (item.ToUpper() == "-DEFINE" || item.ToUpper() == "-DEF")
                 {

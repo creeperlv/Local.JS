@@ -22,14 +22,16 @@ namespace Local.JS.Preprocessor
         /// <summary>
         /// Override settings about removing macros.
         /// </summary>
-        public bool RemoveAllMacros = true;
+        public bool RemoveAllMacros = false;
         public bool RemoveUsingJSMacro = true;
-        public bool RemoveDefineMacro = false;
+        public bool RemoveDefineMacro = true;
+        public bool PreserveModuleInfoMacro = true;
     }
     public class PreProcessorCore
     {
         FileInfo MainSourceFile = null;
         string ScriptContent = null;
+        ProcessSettings settings = new ProcessSettings();
         DirectoryInfo MainSourceFileDirectory;
         DirectoryInfo[] Usings;
         public PreProcessorCore(string ScriptContent, DirectoryInfo MainSourceDirectory, DirectoryInfo[] Usings)
@@ -45,6 +47,11 @@ namespace Local.JS.Preprocessor
             MainSourceFileDirectory = MainSource.Directory;
             if (Usings is null) this.Usings = new DirectoryInfo[0];
             else this.Usings = Usings;
+        }
+        public ProcessSettings GetProcessSettings() => settings;
+        public void SetProcessSettings(ProcessSettings settings)
+        {
+            this.settings = settings;
         }
         JSInfo info = null;
         public JSInfo GetInfo() => info;
@@ -80,25 +87,31 @@ namespace Local.JS.Preprocessor
                     //Macro
                     var macro = item.Trim().Substring(3).Trim();
                     var m0 = CommandLineTool.Analyze(macro);
+                    bool willDisposeLine = false;
                     switch (m0.RealParameter[0].EntireArgument.ToUpper())
                     {
                         case "DEFINE":
                             {
+                                if (settings.RemoveDefineMacro)
+                                    willDisposeLine = true;
                                 var Key = m0.RealParameter[1].EntireArgument;
                                 switch (Key.ToUpper())
                                 {
                                     case "NAME":
                                         {
+                                            if (settings.PreserveModuleInfoMacro) willDisposeLine = false;
                                             info.Name = m0.RealParameter[2].EntireArgument;
                                         }
                                         break;
                                     case "AUTHOR":
                                         {
+                                            if (settings.PreserveModuleInfoMacro) willDisposeLine = false;
                                             info.Author = m0.RealParameter[2].EntireArgument;
                                         }
                                         break;
                                     case "VERSION":
                                         {
+                                            if (settings.PreserveModuleInfoMacro) willDisposeLine = false;
                                             info.Version = new Version(m0.RealParameter[2].EntireArgument);
                                         }
                                         break;
@@ -114,6 +127,8 @@ namespace Local.JS.Preprocessor
                             {
                                 if (m0.RealParameter[1].EntireArgument.ToUpper() == "JS")
                                 {
+                                    if (settings.RemoveUsingJSMacro)
+                                        willDisposeLine = true;
                                     var f = FindJS(m0.RealParameter[2]);
                                     if (f is not null)
                                     {
@@ -161,7 +176,9 @@ namespace Local.JS.Preprocessor
                         default:
                             break;
                     }
-                    continue;
+                    if (settings.RemoveAllMacros is true) willDisposeLine = true;
+                    if (willDisposeLine)
+                        continue;
                 }
                 if (isIgnore is not true)
                 {

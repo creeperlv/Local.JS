@@ -44,3 +44,7 @@ They are:
 ## Samples
 
 Currently, there is only one sample that is a web server, named `SimpleWebServer.js` inside `Samples` folder, it uses some Extensions of Local.JS.
+
+## Licensing
+
+Almost all files under this repo are licensed under the MIT License as `LICENSE` file says.
