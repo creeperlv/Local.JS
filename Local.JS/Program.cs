@@ -22,6 +22,7 @@ namespace Local.JS
             Console.InputEncoding = Encoding.UTF8;
             bool SkipPreprocess = false;
             bool ShowInfo = false;
+            bool willExecute = true;
             string EntryPoint = null;
             StringBuilder Content = new();
             List<Assembly> assemblies = new();
@@ -64,16 +65,70 @@ namespace Local.JS
                     i++;
                 }else if (item.ToUpper() == "--VERSION")
                 {
-                    Console.WriteLine("Local.JS:"+typeof(LocalJSCore).Assembly.GetName().Version);
-                    Console.WriteLine("Local.JS.Preprocessor:"+typeof(PreProcessorCore).Assembly.GetName().Version);
-                    Console.WriteLine("Local.JS.Extension.HttpServer:"+typeof(ServerCore).Assembly.GetName().Version);
-                    Console.WriteLine("Local.JS.Extension.IndexedFile:"+typeof(Extension.IndexedFile.Index).Assembly.GetName().Version);
-                    Console.WriteLine("Local.JS.Extension.BatchedMultiTask:"+typeof(TaskGroup).Assembly.GetName().Version);
-                    Console.WriteLine("Jint:"+typeof(Jint.Engine).Assembly.GetName().Version);
+                    Console.WriteLine(">>>>>>Version Info>>>>>>");
+                    {
+
+                        Console.Write("Local.JS:");
+                        Console.Write("\t\t\t\t");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(typeof(LocalJSCore).Assembly.GetName().Version);
+                        Console.ResetColor();
+                    }
+                    {
+
+                        Console.Write("Local.JS.Preprocessor:");
+                        Console.Write("\t\t\t");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(typeof(PreProcessorCore).Assembly.GetName().Version);
+                        Console.ResetColor();
+                    }
+                    {
+
+                        Console.Write("Local.JS.Extension.HttpServer:");
+                        Console.Write("\t\t");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(typeof(ServerCore).Assembly.GetName().Version);
+                        Console.ResetColor();
+                    }
+                    {
+
+                        Console.Write("Local.JS.Extension.IndexedFile:");
+                        Console.Write("\t\t");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(typeof(Extension.IndexedFile.Index).Assembly.GetName().Version);
+                        Console.ResetColor();
+                    }
+                    {
+
+                        Console.Write("Local.JS.Extension.HttpServer:");
+                        Console.Write("\t\t");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(typeof(ServerCore).Assembly.GetName().Version);
+                        Console.ResetColor();
+                    }
+                    {
+
+                        Console.Write("Local.JS.Extension.BatchedMultiTask:");
+                        Console.Write("\t");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(typeof(TaskGroup).Assembly.GetName().Version);
+                        Console.ResetColor();
+                    }
+                    {
+                        Console.Write("Jint:");
+                        Console.Write("\t\t\t\t\t");
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine(typeof(Engine ).Assembly.GetName().Version);
+                        Console.ResetColor();
+                    }
+                    Console.WriteLine("<<<<<<Info End<<<<<<");
                     return;
                 }else if (item.ToUpper() == "--VIEW-INFO")
                 {
                     ShowInfo = true;
+                }else if (item.ToUpper() == "--NOEXECUTE")
+                {
+                    willExecute = false;
                 }
                 else if (item.ToUpper() == "--NOPREPROCESS")
                 {
@@ -161,6 +216,7 @@ namespace Local.JS
                     Console.WriteLine("<<Warning End<<");
                 }
             }
+            if (willExecute == false) return;
             LocalJSCore localJSCore = new LocalJSCore(assemblies.ToArray());
             localJSCore.AppendProgramSegment(RealContent);
             localJSCore.ExposeType("Console", typeof(Console));
