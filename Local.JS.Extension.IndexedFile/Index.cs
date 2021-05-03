@@ -110,6 +110,11 @@ namespace Local.JS.Extension.IndexedFile
             var installation = Installation00.GetInstallation();
             var fileID = Guid.NewGuid();
             PsesudoLocation = UnifyPseudoLocation(PsesudoLocation);
+            var i = Get(PsesudoLocation);
+            if (i is not null)
+            {
+                i.RealLocation = fi.FullName;
+            }else
             if (installation == Installation.Empty)
             {
                 installation = new Installation();
@@ -143,6 +148,14 @@ namespace Local.JS.Extension.IndexedFile
             PsesudoLocation = UnifyPseudoLocation(PsesudoLocation);
             var installation = Installation00.GetInstallation();
             var fileID = Guid.NewGuid();
+            {
+                var index = Get(PsesudoLocation);
+                if(index != null)
+                {
+                    File.Copy(fi.FullName, index.RealLocation, true);
+                    return;
+                }
+            }
             if (installation == Installation.Empty)
             {
                 installation = new Installation();
