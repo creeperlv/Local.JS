@@ -26,6 +26,10 @@ namespace Local.JS.Preprocessor
                     Flags.Add(args[i + 1]);
                     i++;
 
+                }else if (item.ToUpper() == "-O")
+                {
+                    Output = args[i + 1];
+                    i++;
                 }
                 if (File.Exists(item))
                 {
