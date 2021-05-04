@@ -1,6 +1,6 @@
 # Local.JS
 
-Build Status:[![.NET](https://github.com/creeperlv/Local.JS/actions/workflows/dotnet.yml/badge.svg)](https://github.com/creeperlv/Local.JS/actions/workflows/dotnet.yml)
+[![.NET](https://github.com/creeperlv/Local.JS/actions/workflows/dotnet.yml/badge.svg)](https://github.com/creeperlv/Local.JS/actions/workflows/dotnet.yml)
 
 ![Logo of Local.JS](/Icon.png)
 

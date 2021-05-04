@@ -16,6 +16,7 @@ namespace Local.JS.Preprocessor
         public Version Version=null;
         public List<string> Flags = new List<string>();
         public List<string> UsingDLLs = new List<string>();
+        public Dictionary<string, string> ExposedTypes = new Dictionary<string, string>();
 
     }
     public class ProcessSettings
@@ -27,6 +28,7 @@ namespace Local.JS.Preprocessor
         public bool RemoveUsingJSMacro = true;
         public bool RemoveDefineMacro = true;
         public bool PreserveModuleInfoMacro = true;
+        public bool PreserveExposeTypeMacro = true;
     }
     public class PreProcessorCore
     {
@@ -174,6 +176,15 @@ namespace Local.JS.Preprocessor
                                         break;
                                     }
                                 }
+                            }
+                            break;
+                        case "EXPOSETYPE":
+                            {
+                                var Name = m0.RealParameter[1].EntireArgument;
+                                var Path = m0.RealParameter[2].EntireArgument;
+                                if(settings.PreserveExposeTypeMacro==true) willDisposeLine = false;
+                                if (!info.ExposedTypes.ContainsKey(Name)) info.ExposedTypes.Add(Name, Path);
+                                else info.ExposedTypes[Name] = Path;
                             }
                             break;
                         default:

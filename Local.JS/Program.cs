@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -160,6 +161,7 @@ namespace Local.JS
                 }
             }
             string RealContent = Content.ToString();
+            JSInfo info = null;
             if (SkipPreprocess == false)
             {
                 PreProcessorCore preProcessorCore = new PreProcessorCore(RealContent, new DirectoryInfo(Environment.CurrentDirectory), null);
@@ -170,7 +172,7 @@ namespace Local.JS
                 Flags.Add("RELEASE");
 #endif
                 RealContent = preProcessorCore.Process(Flags);
-                var info = preProcessorCore.GetInfo();
+                info = preProcessorCore.GetInfo();
                 VersionTool.SetInfo(info);
                 if (ShowInfo == true)
                 {
@@ -236,7 +238,17 @@ namespace Local.JS
             localJSCore.ExposeType("CommandLineTool", typeof(CommandLineTool));
             localJSCore.ExposeType("TaskGroup", typeof(TaskGroup));
             localJSCore.ExposeType("VersionTool", typeof(VersionTool));
+            localJSCore.ExposeType("Vector2", typeof(Vector2));
+            localJSCore.ExposeType("BigInteger", typeof(BigInteger));
+            localJSCore.ExposeType("BitConverter", typeof(BitConverter));
             localJSCore.ExposeObject("Core", localJSCore);
+            if(info is not null)
+            {
+                foreach (var item in info.ExposedTypes)
+                {
+                    localJSCore.ExposeType(item.Key, Type.GetType(item.Value));
+                }
+            }
             if (EntryPoint is not null)
             {
                 localJSCore.Execute();
