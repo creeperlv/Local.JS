@@ -124,6 +124,11 @@ namespace Local.JS.Extension.IndexedFile
         /// <param name="PsesudoLocation"></param>
         public static void StoreRef(string RealFile, string PsesudoLocation)
         {
+            if (RealFile.StartsWith("~"))
+            {
+                RealFile.Substring(1);
+                RealFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + RealFile;
+            }
             StoreRef(new FileInfo(RealFile), PsesudoLocation);
         }
         /// <summary>
@@ -172,6 +177,11 @@ namespace Local.JS.Extension.IndexedFile
         /// <param name="PsesudoLocation"></param>
         public static void StoreCpy(string RealFile, string PsesudoLocation)
         {
+            if (RealFile.StartsWith("~"))
+            {
+                RealFile.Substring(1);
+                RealFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + RealFile;
+            }
             StoreCpy(new FileInfo(RealFile), PsesudoLocation);
         }
         /// <summary>
