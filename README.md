@@ -1,5 +1,7 @@
 # Local.JS
 
+Build Status:[![.NET](https://github.com/creeperlv/Local.JS/actions/workflows/dotnet.yml/badge.svg)](https://github.com/creeperlv/Local.JS/actions/workflows/dotnet.yml)
+
 ![Logo of Local.JS](/Icon.png)
 
 This is a small tool to run JavaScript programs locally without web browsers. Currently, it can be used to build up a simple web browser.
