@@ -20,6 +20,7 @@ namespace Local.JS
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;
+            Environment.CurrentDirectory = (new FileInfo(typeof(Program).Assembly.Location)).Directory.FullName;
             bool SkipPreprocess = false;
             bool ShowInfo = false;
             bool willExecute = true;
@@ -142,6 +143,7 @@ namespace Local.JS
                 {
                     if (File.Exists(item))
                     {
+                        Environment.CurrentDirectory = new FileInfo(item).Directory.FullName;
                         if (item.ToUpper().EndsWith("JS"))
                         {
                             Content.Append(File.ReadAllText(item));

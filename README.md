@@ -1,5 +1,7 @@
 # Local.JS
 
+![Logo of Local.JS](/Icon.png)
+
 This is a small tool to run JavaScript programs locally without web browsers. Currently, it can be used to build up a simple web browser.
 
 ## Get Started

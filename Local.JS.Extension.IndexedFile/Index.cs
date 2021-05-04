@@ -113,7 +113,9 @@ namespace Local.JS.Extension.IndexedFile
         }
         public static string UnifyPseudoLocation(string Location)
         {
-            return Location.Replace("\\", "/");
+            var item = Location.Replace("\\", "/");
+            if (!item.StartsWith("/")) item = "/" + item;
+            return item;
         }
         /// <summary>
         /// Store a reference to given file.
