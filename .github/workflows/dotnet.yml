@@ -18,9 +18,27 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore
+    - name: Build (win-x64)
+      run: dotnet build -r win-x64 Local.JS
+    - name: Build (linux-x64)
+      run: dotnet build -r linux-x64 Local.JS
+    - name: Build (linux-arm64)
+      run: dotnet build -r linux-arm64 Local.JS
 #    - name: Test
 #      run: dotnet test --no-build --verbosity normal
+    - name: Upload a Build Artifact (Windows X64)
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: Local.JS-win-x64
+        path: Local.JS/bin/Debug/net5.0/win-x64/ormal
+    - name: Upload a Build Artifact (Linux X64)
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: Local.JS-linux-x64
+        path: Local.JS/bin/Debug/net5.0/linux-x64/
+    - name: Upload a Build Artifact (Linux Arm64)
+      uses: actions/upload-artifact@v2.2.3
+      with:
+        name: Local.JS-linux-x64
+        path: Local.JS/bin/Debug/net5.0/linux-arm64/
+    # The desired behavior if no files are found using the provided path.
