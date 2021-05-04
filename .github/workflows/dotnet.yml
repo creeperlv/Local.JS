@@ -30,7 +30,7 @@ jobs:
       uses: actions/upload-artifact@v2.2.3
       with:
         name: Local.JS-win-x64
-        path: Local.JS/bin/Debug/net5.0/win-x64/ormal
+        path: Local.JS/bin/Debug/net5.0/win-x64/
     - name: Upload a Build Artifact (Linux X64)
       uses: actions/upload-artifact@v2.2.3
       with:
@@ -39,6 +39,6 @@ jobs:
     - name: Upload a Build Artifact (Linux Arm64)
       uses: actions/upload-artifact@v2.2.3
       with:
-        name: Local.JS-linux-x64
+        name: Local.JS-linux-arm64
         path: Local.JS/bin/Debug/net5.0/linux-arm64/
     # The desired behavior if no files are found using the provided path.
