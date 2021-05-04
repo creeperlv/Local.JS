@@ -33,6 +33,10 @@ namespace Local.JS.Extension.IndexedFile
                     return new FileInfo(Path.Combine(BasePath, ParentInstallation, RealLocation));
             }
         }
+        /// <summary>
+        /// Init IndexedFile with target manifest.
+        /// </summary>
+        /// <param name="Manifest"></param>
         public static void Init(string Manifest)
         {
             FileInfo ManifestFile = new FileInfo(Manifest);
@@ -57,6 +61,11 @@ namespace Local.JS.Extension.IndexedFile
                 Installation00.PresentingInstallations.Add(installation);
             }
         }
+        /// <summary>
+        /// List all indices whose psesudo location is start with given path.
+        /// </summary>
+        /// <param name="PsesudoLocation"></param>
+        /// <returns></returns>
         public static List<Index> List(string PsesudoLocation)
         {
             List<Index> indices = new List<Index>();
@@ -75,6 +84,11 @@ namespace Local.JS.Extension.IndexedFile
             }
             return indices;
         }
+        /// <summary>
+        /// Get a file index by specifying 
+        /// </summary>
+        /// <param name="PsesudoLocation"></param>
+        /// <returns></returns>
         public static Index Get(string PsesudoLocation)
         {
 
@@ -101,10 +115,20 @@ namespace Local.JS.Extension.IndexedFile
         {
             return Location.Replace("\\", "/");
         }
+        /// <summary>
+        /// Store a reference to given file.
+        /// </summary>
+        /// <param name="RealFile"></param>
+        /// <param name="PsesudoLocation"></param>
         public static void StoreRef(string RealFile, string PsesudoLocation)
         {
             StoreRef(new FileInfo(RealFile), PsesudoLocation);
         }
+        /// <summary>
+        /// Store a reference to given file.
+        /// </summary>
+        /// <param name="fi"></param>
+        /// <param name="PsesudoLocation"></param>
         public static void StoreRef(FileInfo fi, string PsesudoLocation)
         {
             var installation = Installation00.GetInstallation();
@@ -139,10 +163,20 @@ namespace Local.JS.Extension.IndexedFile
                 installation.Indices.Add(index);
             }
         }
+        /// <summary>
+        /// Store a copy of given file.
+        /// </summary>
+        /// <param name="RealFile"></param>
+        /// <param name="PsesudoLocation"></param>
         public static void StoreCpy(string RealFile, string PsesudoLocation)
         {
             StoreCpy(new FileInfo(RealFile), PsesudoLocation);
         }
+        /// <summary>
+        /// Store a copy of given file.
+        /// </summary>
+        /// <param name="fi"></param>
+        /// <param name="PsesudoLocation"></param>
         public static void StoreCpy(FileInfo fi, string PsesudoLocation)
         {
             PsesudoLocation = UnifyPseudoLocation(PsesudoLocation);

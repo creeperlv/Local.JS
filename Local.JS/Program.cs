@@ -169,6 +169,7 @@ namespace Local.JS
 #endif
                 RealContent = preProcessorCore.Process(Flags);
                 var info = preProcessorCore.GetInfo();
+                VersionTool.SetInfo(info);
                 if (ShowInfo == true)
                 {
                     Console.WriteLine(">>>>>>Module Info>>>>>>");
@@ -232,6 +233,7 @@ namespace Local.JS
             localJSCore.ExposeType("Directory", typeof(Directory));
             localJSCore.ExposeType("CommandLineTool", typeof(CommandLineTool));
             localJSCore.ExposeType("TaskGroup", typeof(TaskGroup));
+            localJSCore.ExposeType("VersionTool", typeof(VersionTool));
             localJSCore.ExposeObject("Core", localJSCore);
             if (EntryPoint is not null)
             {

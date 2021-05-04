@@ -10,9 +10,10 @@ namespace Local.JS.Preprocessor
 {
     public class JSInfo
     {
-        public string Name;
-        public string Author;
-        public Version Version;
+        public List<JSInfo> SubModules = new List<JSInfo>();
+        public string Name="";
+        public string Author="";
+        public Version Version=null;
         public List<string> Flags = new List<string>();
         public List<string> UsingDLLs = new List<string>();
 
@@ -79,6 +80,8 @@ namespace Local.JS.Preprocessor
         {
             StringBuilder stringBuilder = new StringBuilder();
             bool isIgnore = false;
+            JSInfo info;
+            if (isMainFile) info = this.info; else info = new JSInfo();
             for (int i = 0; i < lines.Length; i++)
             {
                 var item = lines[i];
@@ -99,19 +102,19 @@ namespace Local.JS.Preprocessor
                                 {
                                     case "NAME":
                                         {
-                                            if (settings.PreserveModuleInfoMacro) willDisposeLine = false;
+                                            if (settings.PreserveModuleInfoMacro && isMainFile) willDisposeLine = false;
                                             info.Name = m0.RealParameter[2].EntireArgument;
                                         }
                                         break;
                                     case "AUTHOR":
                                         {
-                                            if (settings.PreserveModuleInfoMacro) willDisposeLine = false;
+                                            if (settings.PreserveModuleInfoMacro && isMainFile) willDisposeLine = false;
                                             info.Author = m0.RealParameter[2].EntireArgument;
                                         }
                                         break;
                                     case "VERSION":
                                         {
-                                            if (settings.PreserveModuleInfoMacro) willDisposeLine = false;
+                                            if (settings.PreserveModuleInfoMacro && isMainFile) willDisposeLine = false;
                                             info.Version = new Version(m0.RealParameter[2].EntireArgument);
                                         }
                                         break;
@@ -186,6 +189,7 @@ namespace Local.JS.Preprocessor
                     stringBuilder.Append(Environment.NewLine);
                 }
             }
+            if (!isMainFile) this.info.SubModules.Add(info);
             return stringBuilder.ToString();
         }
         internal string Process(string content, bool isMainFile)
