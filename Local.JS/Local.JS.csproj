@@ -19,4 +19,13 @@
     <ProjectReference Include="..\Local.JS.Preprocessor\Local.JS.Preprocessor.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Include\HttpServer.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Include\IndexedFile.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

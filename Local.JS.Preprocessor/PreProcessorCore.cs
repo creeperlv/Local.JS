@@ -36,20 +36,34 @@ namespace Local.JS.Preprocessor
         string ScriptContent = null;
         ProcessSettings settings = new ProcessSettings();
         DirectoryInfo MainSourceFileDirectory;
-        DirectoryInfo[] Usings;
-        public PreProcessorCore(string ScriptContent, DirectoryInfo MainSourceDirectory, DirectoryInfo[] Usings)
+        List<DirectoryInfo> Usings;
+        public PreProcessorCore(string ScriptContent, DirectoryInfo MainSourceDirectory, List<DirectoryInfo> Usings)
         {
             this.ScriptContent = ScriptContent;
             MainSourceFileDirectory = MainSourceDirectory;
-            if (Usings is null) this.Usings = new DirectoryInfo[0];
+            if (Usings is null) this.Usings = new ();
             else this.Usings = Usings;
+
+            string Path0 = (new FileInfo(typeof(PreProcessorCore).Assembly.Location)).Directory.FullName;
+            {
+                DirectoryInfo di = new DirectoryInfo(Path.Combine(Path0, "Include"));
+                if (!di.Exists) di.Create();
+                this.Usings.Add(di);
+            }
+
         }
-        public PreProcessorCore(FileInfo MainSource, DirectoryInfo[] Usings)
+        public PreProcessorCore(FileInfo MainSource, List<DirectoryInfo> Usings)
         {
             MainSourceFile = MainSource;
             MainSourceFileDirectory = MainSource.Directory;
-            if (Usings is null) this.Usings = new DirectoryInfo[0];
+            if (Usings is null) this.Usings = new ();
             else this.Usings = Usings;
+            string Path0 = (new FileInfo(typeof(PreProcessorCore).Assembly.Location)).Directory.FullName;
+            {
+                DirectoryInfo di = new DirectoryInfo(Path.Combine(Path0, "Include"));
+                if (!di.Exists) di.Create();
+                this.Usings.Add(di);
+            }
         }
         public ProcessSettings GetProcessSettings() => settings;
         public void SetProcessSettings(ProcessSettings settings)
@@ -83,7 +97,8 @@ namespace Local.JS.Preprocessor
             StringBuilder stringBuilder = new StringBuilder();
             bool isIgnore = false;
             JSInfo info;
-            if (isMainFile) info = this.info; else info = new JSInfo();
+            if (isMainFile) info = this.info;
+            else info = new JSInfo();
             for (int i = 0; i < lines.Length; i++)
             {
                 var item = lines[i];
@@ -134,10 +149,16 @@ namespace Local.JS.Preprocessor
                                 {
                                     if (settings.RemoveUsingJSMacro)
                                         willDisposeLine = true;
-                                    var f = FindJS(m0.RealParameter[2]);
+                                    var f = FindJS(m0.RealParameter[2].EntireArgument);
                                     if (f is not null)
                                     {
-                                        lines[i] = Process(f, false);
+                                        item = Process(f, false);
+                                        stringBuilder.Append(item);
+                                        continue;// Force skip this to avoid duplicate code.
+                                    }
+                                    else
+                                    {
+                                        throw new Exception("Target JS file not found:"+ m0.RealParameter[2].EntireArgument);
                                     }
                                     //Pre-Combine JavaScript Codes.
                                 }

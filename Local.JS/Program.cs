@@ -21,7 +21,8 @@ namespace Local.JS
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.InputEncoding = Encoding.UTF8;
-            Environment.CurrentDirectory = (new FileInfo(typeof(Program).Assembly.Location)).Directory.FullName;
+            string Path0 = (new FileInfo(typeof(Program).Assembly.Location)).Directory.FullName;
+            Environment.CurrentDirectory = Path0;
             bool SkipPreprocess = false;
             bool ShowInfo = false;
             bool willExecute = true;
@@ -53,7 +54,7 @@ namespace Local.JS
                     i++;
                 }
                 else
-                if (item.ToUpper() == "-DEFINE"|| item.ToUpper() == "-DEF")
+                if (item.ToUpper() == "-DEFINE" || item.ToUpper() == "-DEF")
                 {
                     item = args[i + 1];
                     Flags.Add(item);
@@ -65,7 +66,8 @@ namespace Local.JS
                     item = args[i + 1];
                     EntryPoint = item;
                     i++;
-                }else if (item.ToUpper() == "--VERSION")
+                }
+                else if (item.ToUpper() == "--VERSION")
                 {
                     Console.WriteLine(">>>>>>Version Info>>>>>>");
                     {
@@ -120,15 +122,17 @@ namespace Local.JS
                         Console.Write("Jint:");
                         Console.Write("\t\t\t\t\t");
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine(typeof(Engine ).Assembly.GetName().Version);
+                        Console.WriteLine(typeof(Engine).Assembly.GetName().Version);
                         Console.ResetColor();
                     }
                     Console.WriteLine("<<<<<<Info End<<<<<<");
                     return;
-                }else if (item.ToUpper() == "--VIEW-INFO")
+                }
+                else if (item.ToUpper() == "--VIEW-INFO")
                 {
                     ShowInfo = true;
-                }else if (item.ToUpper() == "--NOEXECUTE")
+                }
+                else if (item.ToUpper() == "--NOEXECUTE")
                 {
                     willExecute = false;
                 }
@@ -177,9 +181,9 @@ namespace Local.JS
                 if (ShowInfo == true)
                 {
                     Console.WriteLine(">>>>>>Module Info>>>>>>");
-                    Console.WriteLine("Name:"+info.Name);
-                    Console.WriteLine("Author:"+info.Author);
-                    Console.WriteLine("Version:"+info.Version);
+                    Console.WriteLine("Name:" + info.Name);
+                    Console.WriteLine("Author:" + info.Author);
+                    Console.WriteLine("Version:" + info.Version);
                     Console.WriteLine("<<<<<<Info End<<<<<<");
                 }
                 List<FileInfo> fis = new List<FileInfo>();
@@ -188,7 +192,7 @@ namespace Local.JS
                     FileInfo fileInfo = new FileInfo(item);
                     if (fileInfo.Exists)
                     {
-                        bool Existed=false;
+                        bool Existed = false;
                         foreach (var f in fis)
                         {
                             if (f.FullName == fileInfo.FullName)
@@ -200,6 +204,78 @@ namespace Local.JS
                         if (Existed == false)
                         {
                             fis.Add(fileInfo);
+                        }
+                    }
+                    else
+                    {
+                        fileInfo = new FileInfo(Path.Combine(Path0, item));
+                        if (fileInfo.Exists)
+                        {
+                            bool Existed = false;
+                            foreach (var f in fis)
+                            {
+                                if (f.FullName == fileInfo.FullName)
+                                {
+                                    Existed = true;
+                                    break;
+                                }
+                            }
+                            if (Existed == false)
+                            {
+                                fis.Add(fileInfo);
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Cannot load:" + item);
+                        }
+                    }
+                }
+                foreach (var submodule in info.SubModules)
+                {
+
+                    foreach (var item in submodule.UsingDLLs)
+                    {
+                        FileInfo fileInfo = new FileInfo(item);
+                        if (fileInfo.Exists)
+                        {
+                            bool Existed = false;
+                            foreach (var f in fis)
+                            {
+                                if (f.FullName == fileInfo.FullName)
+                                {
+                                    Existed = true;
+                                    break;
+                                }
+                            }
+                            if (Existed == false)
+                            {
+                                fis.Add(fileInfo);
+                            }
+                        }
+                        else
+                        {
+                            fileInfo = new FileInfo(Path.Combine(Path0, item));
+                            if (fileInfo.Exists)
+                            {
+                                bool Existed = false;
+                                foreach (var f in fis)
+                                {
+                                    if (f.FullName == fileInfo.FullName)
+                                    {
+                                        Existed = true;
+                                        break;
+                                    }
+                                }
+                                if (Existed == false)
+                                {
+                                    fis.Add(fileInfo);
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("Cannot load:" + item);
+                            }
                         }
                     }
                 }
@@ -221,12 +297,15 @@ namespace Local.JS
                     Console.WriteLine("<<Warning End<<");
                 }
             }
-            if (willExecute == false) return;
+            if (willExecute == false)
+            {
+                return;
+            }
             LocalJSCore localJSCore = new LocalJSCore(assemblies.ToArray());
             localJSCore.AppendProgramSegment(RealContent);
             localJSCore.ExposeType("Console", typeof(Console));
-            localJSCore.ExposeType("ServerCore", typeof(ServerCore));
-            localJSCore.ExposeType("Index", typeof(Extension.IndexedFile.Index));
+            //localJSCore.ExposeType("ServerCore", typeof(ServerCore));
+            //localJSCore.ExposeType("Index", typeof(Extension.IndexedFile.Index));
             localJSCore.ExposeMethod("alert", new Action<object>(Console.WriteLine));
             localJSCore.ExposeMethod("error", new Action<object>((o) => { Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine(o); Console.ResetColor(); }));
             localJSCore.ExposeMethod("warn", new Action<object>((o) => { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine(o); Console.ResetColor(); }));
@@ -242,11 +321,39 @@ namespace Local.JS
             localJSCore.ExposeType("BigInteger", typeof(BigInteger));
             localJSCore.ExposeType("BitConverter", typeof(BitConverter));
             localJSCore.ExposeObject("Core", localJSCore);
-            if(info is not null)
+            if (info is not null)
             {
                 foreach (var item in info.ExposedTypes)
                 {
-                    localJSCore.ExposeType(item.Key, Type.GetType(item.Value));
+                    Type t = null;
+                    foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                    {
+                        t = asm.GetType(item.Value);
+                        if (t is not null) break;
+                    }
+                    if (t is not null)
+                    {
+                        localJSCore.ExposeType(item.Key, t);
+                    }
+                    else Console.WriteLine("Cannot Expose:" + item.Value);
+                }
+                foreach (var submodule in info.SubModules)
+                {
+
+                    foreach (var item in submodule.ExposedTypes)
+                    {
+                        Type t = null;
+                        foreach (var asm in AppDomain.CurrentDomain.GetAssemblies())
+                        {
+                            t = asm.GetType(item.Value);
+                            if (t is not null) break;
+                        }
+                        if (t is not null)
+                        {
+                            localJSCore.ExposeType(item.Key, t);
+                        }
+                        else Console.WriteLine("Cannot Expose:" + item.Value);
+                    }
                 }
             }
             if (EntryPoint is not null)

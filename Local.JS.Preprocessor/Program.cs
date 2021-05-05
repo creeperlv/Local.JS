@@ -74,7 +74,7 @@ namespace Local.JS.Preprocessor
                 Output = Path.Combine(MainSource.Directory.FullName, "_" + MainSource.Name);
             }
 
-            PreProcessorCore core = new PreProcessorCore(MainSource, di.ToArray());
+            PreProcessorCore core = new PreProcessorCore(MainSource, di);
             var content=core.Process(Flags);
             try
             {
