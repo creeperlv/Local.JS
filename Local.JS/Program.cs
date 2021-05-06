@@ -311,11 +311,11 @@ namespace Local.JS
             localJSCore.ExposeMethod("warn", new Action<object>((o) => { Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine(o); Console.ResetColor(); }));
             localJSCore.ExposeMethod("pass", new Action<object>((o) => { Console.ForegroundColor = ConsoleColor.Green; Console.WriteLine(o); Console.ResetColor(); }));
             localJSCore.ExposeType("CoreVersions", typeof(CoreVersions));
-            localJSCore.ExposeType("JsonConvert", typeof(JsonConvert));
-            localJSCore.ExposeType("File", typeof(File));
-            localJSCore.ExposeType("Directory", typeof(Directory));
-            localJSCore.ExposeType("CommandLineTool", typeof(CommandLineTool));
-            localJSCore.ExposeType("TaskGroup", typeof(TaskGroup));
+            //localJSCore.ExposeType("JsonConvert", typeof(JsonConvert));
+            //localJSCore.ExposeType("File", typeof(File));
+            //localJSCore.ExposeType("Directory", typeof(Directory));
+            //localJSCore.ExposeType("CommandLineTool", typeof(CommandLineTool));
+            //localJSCore.ExposeType("TaskGroup", typeof(TaskGroup));
             localJSCore.ExposeType("VersionTool", typeof(VersionTool));
             localJSCore.ExposeType("Vector2", typeof(Vector2));
             localJSCore.ExposeType("BigInteger", typeof(BigInteger));

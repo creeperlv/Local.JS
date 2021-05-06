@@ -1,6 +1,9 @@
 /// DEFINE NAME SampleStaticServer
 /// DEFINE VERSION 1.0.0.0
 /// DEFINE AUTHOR Creeper Lv
+/// USING JS "IndexedFile.js"
+/// USING JS "HttpServer.js"
+/// USING JS "Miscellaneous.js"
 function HttpHandler(context){
 	alert("Request:"+context.Request.HttpMethod+">>"+context.Request.Url.AbsolutePath);
 	var index=Index.Get(context.Request.Url.AbsolutePath.substring(1));
