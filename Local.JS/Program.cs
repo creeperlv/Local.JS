@@ -371,6 +371,11 @@ namespace Local.JS
                     localJSCore.ExposeObject("args", _args);
 
                 }
+                else
+                {
+                    localJSCore.ExposeObject("args", new string[0]);
+
+                }
                 localJSCore.Execute();
             }
         }

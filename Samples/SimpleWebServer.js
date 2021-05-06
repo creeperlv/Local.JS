@@ -4,6 +4,7 @@
 /// USING JS "IndexedFile.js"
 /// USING JS "HttpServer.js"
 /// USING JS "Miscellaneous.js"
+/// USING JS "io.js"
 function HttpHandler(context){
 	alert("Request:"+context.Request.HttpMethod+">>"+context.Request.Url.AbsolutePath);
 	var index=Index.Get(context.Request.Url.AbsolutePath.substring(1));
@@ -30,7 +31,11 @@ function Command(){
 		}else if(cmdL.RealParameter[0].EntireArgument.toUpperCase().startsWith("REG")){
 			try{
 				var item1=cmdL.RealParameter[1].EntireArgument;// arg0
-				var item2=cmdL.RealParameter[2].EntireArgument;// arg1
+				var item2 = cmdL.RealParameter[2].EntireArgument;// arg1
+				if (Index.ValidateLocalPath(item1)) {
+					error("Given local file does not exist!");
+					continue;
+                }
 				if(item1==""){
 					error("Wrong Argument.");
 					continue;
@@ -44,7 +49,30 @@ function Command(){
 			}catch(e){
 				error("Something Wrong:"+e);
 			}
-			
+
+		} else if (cmdL.RealParameter[0].EntireArgument.toUpperCase().startsWith("REF")) {
+			try {
+				var item1 = cmdL.RealParameter[1].EntireArgument;// arg0
+				var item2 = cmdL.RealParameter[2].EntireArgument;// arg1
+				if (Index.ValidateLocalPath(item1)) {
+					error("Given local file does not exist!");
+					continue;
+				}
+				if (item1 == "") {
+					error("Wrong Argument.");
+					continue;
+				}
+				if (item2 == "") {
+					error("Wrong Argument.");
+					continue;
+				}
+				Index.StoreRef(item1, item2);
+				Index.SaveIndeics();
+			} catch (e) {
+				error("Something Wrong:" + e);
+			}
+
+		
 		}else{
 			warn("Unknown command.");
 		}

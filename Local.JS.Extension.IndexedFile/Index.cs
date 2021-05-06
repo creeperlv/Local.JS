@@ -62,6 +62,22 @@ namespace Local.JS.Extension.IndexedFile
             }
         }
         /// <summary>
+        /// Validate the existence of local path.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public static bool ValidateLocalPath(string path)
+        {
+            var RealFile = path;
+
+            if (RealFile.StartsWith("~"))
+            {
+                RealFile.Substring(1);
+                RealFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + RealFile;
+            }
+            return File.Exists(RealFile);
+        }
+        /// <summary>
         /// List all indices whose psesudo location is start with given path.
         /// </summary>
         /// <param name="PsesudoLocation"></param>
