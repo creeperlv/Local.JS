@@ -11,9 +11,9 @@ namespace Local.JS.Preprocessor
     public class JSInfo
     {
         public List<JSInfo> SubModules = new List<JSInfo>();
-        public string Name="";
-        public string Author="";
-        public Version Version=null;
+        public string Name = "";
+        public string Author = "";
+        public Version Version = null;
         public List<string> Flags = new List<string>();
         public List<string> UsingDLLs = new List<string>();
         public Dictionary<string, string> ExposedTypes = new Dictionary<string, string>();
@@ -41,7 +41,7 @@ namespace Local.JS.Preprocessor
         {
             this.ScriptContent = ScriptContent;
             MainSourceFileDirectory = MainSourceDirectory;
-            if (Usings is null) this.Usings = new ();
+            if (Usings is null) this.Usings = new();
             else this.Usings = Usings;
 
             string Path0 = (new FileInfo(typeof(PreProcessorCore).Assembly.Location)).Directory.FullName;
@@ -56,7 +56,7 @@ namespace Local.JS.Preprocessor
         {
             MainSourceFile = MainSource;
             MainSourceFileDirectory = MainSource.Directory;
-            if (Usings is null) this.Usings = new ();
+            if (Usings is null) this.Usings = new();
             else this.Usings = Usings;
             string Path0 = (new FileInfo(typeof(PreProcessorCore).Assembly.Location)).Directory.FullName;
             {
@@ -112,60 +112,66 @@ namespace Local.JS.Preprocessor
                     {
                         case "DEFINE":
                             {
-                                if (settings.RemoveDefineMacro)
-                                    willDisposeLine = true;
-                                var Key = m0.RealParameter[1].EntireArgument;
-                                switch (Key.ToUpper())
+                                if (isIgnore is not true)
                                 {
-                                    case "NAME":
-                                        {
-                                            if (settings.PreserveModuleInfoMacro && isMainFile) willDisposeLine = false;
-                                            info.Name = m0.RealParameter[2].EntireArgument;
-                                        }
-                                        break;
-                                    case "AUTHOR":
-                                        {
-                                            if (settings.PreserveModuleInfoMacro && isMainFile) willDisposeLine = false;
-                                            info.Author = m0.RealParameter[2].EntireArgument;
-                                        }
-                                        break;
-                                    case "VERSION":
-                                        {
-                                            if (settings.PreserveModuleInfoMacro && isMainFile) willDisposeLine = false;
-                                            info.Version = new Version(m0.RealParameter[2].EntireArgument);
-                                        }
-                                        break;
-                                    default:
-                                        {
-                                            info.Flags.Add(Key);
-                                        }
-                                        break;
+                                    if (settings.RemoveDefineMacro)
+                                        willDisposeLine = true;
+                                    var Key = m0.RealParameter[1].EntireArgument;
+                                    switch (Key.ToUpper())
+                                    {
+                                        case "NAME":
+                                            {
+                                                if (settings.PreserveModuleInfoMacro && isMainFile) willDisposeLine = false;
+                                                info.Name = m0.RealParameter[2].EntireArgument;
+                                            }
+                                            break;
+                                        case "AUTHOR":
+                                            {
+                                                if (settings.PreserveModuleInfoMacro && isMainFile) willDisposeLine = false;
+                                                info.Author = m0.RealParameter[2].EntireArgument;
+                                            }
+                                            break;
+                                        case "VERSION":
+                                            {
+                                                if (settings.PreserveModuleInfoMacro && isMainFile) willDisposeLine = false;
+                                                info.Version = new Version(m0.RealParameter[2].EntireArgument);
+                                            }
+                                            break;
+                                        default:
+                                            {
+                                                info.Flags.Add(Key);
+                                            }
+                                            break;
+                                    }
                                 }
                             }
                             break;
                         case "USING":
                             {
-                                if (m0.RealParameter[1].EntireArgument.ToUpper() == "JS")
+                                if (isIgnore is not true)
                                 {
-                                    if (settings.RemoveUsingJSMacro)
-                                        willDisposeLine = true;
-                                    var f = FindJS(m0.RealParameter[2].EntireArgument);
-                                    if (f is not null)
+                                    if (m0.RealParameter[1].EntireArgument.ToUpper() == "JS")
                                     {
-                                        item = Process(f, false);
-                                        stringBuilder.Append(item);
-                                        continue;// Force skip this to avoid duplicate code.
+                                        if (settings.RemoveUsingJSMacro)
+                                            willDisposeLine = true;
+                                        var f = FindJS(m0.RealParameter[2].EntireArgument);
+                                        if (f is not null)
+                                        {
+                                            item = Process(f, false);
+                                            stringBuilder.Append(item);
+                                            continue;// Force skip this to avoid duplicate code.
+                                        }
+                                        else
+                                        {
+                                            throw new Exception("Target JS file not found:" + m0.RealParameter[2].EntireArgument);
+                                        }
+                                        //Pre-Combine JavaScript Codes.
                                     }
                                     else
-                                    {
-                                        throw new Exception("Target JS file not found:"+ m0.RealParameter[2].EntireArgument);
-                                    }
-                                    //Pre-Combine JavaScript Codes.
-                                }
-                                else
                                 if (m0.RealParameter[1].EntireArgument.ToUpper() == "DLL")
-                                {
-                                    info.UsingDLLs.Add(m0.RealParameter[2]);
+                                    {
+                                        info.UsingDLLs.Add(m0.RealParameter[2]);
+                                    }
                                 }
                             }
                             break;
@@ -201,11 +207,14 @@ namespace Local.JS.Preprocessor
                             break;
                         case "EXPOSETYPE":
                             {
-                                var Name = m0.RealParameter[1].EntireArgument;
-                                var Path = m0.RealParameter[2].EntireArgument;
-                                if(settings.PreserveExposeTypeMacro==true) willDisposeLine = false;
-                                if (!info.ExposedTypes.ContainsKey(Name)) info.ExposedTypes.Add(Name, Path);
-                                else info.ExposedTypes[Name] = Path;
+                                if (isIgnore is not true)
+                                {
+                                    var Name = m0.RealParameter[1].EntireArgument;
+                                    var Path = m0.RealParameter[2].EntireArgument;
+                                    if (settings.PreserveExposeTypeMacro == true) willDisposeLine = false;
+                                    if (!info.ExposedTypes.ContainsKey(Name)) info.ExposedTypes.Add(Name, Path);
+                                    else info.ExposedTypes[Name] = Path;
+                                }
                             }
                             break;
                         default:
