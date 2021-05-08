@@ -20,9 +20,13 @@ namespace Local.JS.JSIO
         {
             Out = sr;
         }
+        public static void printfn(string Content,params object[] para)
+        {
+            Out.Write(String.Format(Content, para));
+        }
         public static void printf(string Content, params object[] para)
         {
-            Out.WriteLine(Content);
+            Out.Write(Content);
         }
         public static char getc()
         {
