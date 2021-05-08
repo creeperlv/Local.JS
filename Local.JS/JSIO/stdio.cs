@@ -20,7 +20,7 @@ namespace Local.JS.JSIO
         {
             Out = sr;
         }
-        public static void printfn(string Content,params object[] para)
+        public static void printfn(string Content, params object[] para)
         {
             Out.Write(String.Format(Content, para));
         }
@@ -36,17 +36,68 @@ namespace Local.JS.JSIO
         {
             return In.ReadLine();
         }
-        public static string[] scanf(string Format)
+        static Queue<string> Input = new Queue<string>();
+        public static object[] scanf(string Format)
         {
             var formats = JSIO.Format.FromStirng(Format);
+            List<object> objs = new List<object>();
 
             for (int i = 0; i < formats.Length; i++)
             {
-                var a = In.ReadLine();
-                var packs = CommandLineTool.Analyze(a);
-
+                if (Input.Count == 0) ReadLine();
+                var item = formats[i];
+                var inp = Input.Dequeue();
+                if (item.w != -1)
+                {
+                    inp = inp.Substring(0, item.w);
+                }
+                switch (item.type)
+                {
+                    case FormatT.C:
+                        objs.Add(inp.First());
+                        break;
+                    case FormatT.D:
+                        //Console.WriteLine(inp);
+                        objs.Add(int.Parse(inp));
+                        break;
+                    case FormatT.F:
+                        objs.Add(Convert.ToSingle(inp));
+                        break;
+                    case FormatT.I:
+                        objs.Add(Convert.ToInt32(inp));
+                        break;
+                    case FormatT.O:
+                        objs.Add(Convert.ToInt32(inp, 8));
+                        break;
+                    case FormatT.S:
+                        objs.Add(inp);
+                        break;
+                    case FormatT.U:
+                        {
+                            objs.Add(Convert.ToUInt32(inp));
+                        }
+                        break;
+                    case FormatT.X:
+                        {
+                            objs.Add(Convert.ToInt32(inp, 16));
+                        }
+                        break;
+                    default:
+                        break;
+                }
             }
-            return null;
+            return objs.ToArray();
+        }
+        static void ReadLine()
+        {
+            var a = In.ReadLine();
+            var packs = CommandLineTool.Analyze(a);
+            foreach (var item in packs.RealParameter)
+            {
+                //Console.WriteLine("Enq:"+item.EntireArgument);
+                Input.Enqueue(item.EntireArgument);
+            }
+            if (Input.Count == 0) ReadLine();
         }
     }
     internal enum FormatT
@@ -62,18 +113,73 @@ namespace Local.JS.JSIO
     }
     internal class Format
     {
-        internal string type;
+        internal FormatT type;
+        internal int w;
         internal static Format[] FromStirng(string f)
         {
             var L = new List<Format>();
+            bool s = false;
+            string width = "";
+            Format CurrentFormat = new Format();
             for (int i = 0; i < f.Length; i++)
             {
                 if (f[i] == '%')
                 {
+                    width = "";
+                    CurrentFormat = new Format();
+                    s = true;
+                }else
+                if (s == true)
+                {
+                    var item = f[i];
+                    if (item is >= '0' and <= '9')
+                    {
+                        width += item;
+                    }
+                    else
+                    {
+                        if (width is not "")
+                            CurrentFormat.w = int.Parse(width);
+                        else CurrentFormat.w = -1;
+                        switch (item)
+                        {
+                            case 'c':
+                                CurrentFormat.type = FormatT.C;
+                                break;
+                            case 'd':
+                                CurrentFormat.type = FormatT.D;
+                                break;
+                            case 'e':case  'E':
+                            case 'f':case  'F':
+                            case 'g':case  'G':
+                                CurrentFormat.type = FormatT.F;
+                                break;
+                            case 'i':
+                                CurrentFormat.type = FormatT.I;
+                                break;
+                            case 'o':
+                                CurrentFormat.type = FormatT.O;
+                                break;
+                            case 's':
 
+                                CurrentFormat.type = FormatT.S;
+                                break;
+                            case 'u':
+                                CurrentFormat.type = FormatT.U;
+                                break;
+                            case 'x':
+                            case 'X':
+                                CurrentFormat.type = FormatT.X;
+                                break;
+                            default:
+                                break;
+                        }
+                        s = false;
+                        L.Add(CurrentFormat);
+                    }
                 }
             }
-            return null;
+            return L.ToArray(); ;
         }
     }
 }

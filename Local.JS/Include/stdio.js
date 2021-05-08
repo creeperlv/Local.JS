@@ -4,28 +4,29 @@
 /// IFNDEF STDIO
 /// DEFINE STDIO
 /// ENDIF
+/// EXPOSETYPE __stdio__ Local.JS.JSIO.stdio
 function getc() {
-    return Local.JS.JSIO.stdio.getc();
+    return __stdio__.getc();
 }
 function gets() {
-    return Local.JS.JSIO.stdio.gets();
+    return __stdio__.gets();
 }
 function scanf(format) {
-    return Local.JS.JSIO.stdio.scanf(format);
+    return __stdio__.scanf(format);
 }
 function printf() {
     var param = new Array();
     for (var i = 1; i < arguments.length; i++) {
         param.push(arguments[i]);
     }
-    Local.JS.JSIO.stdio.printf(arguments[0], param);
+    __stdio__.printf(arguments[0], param);
 }
 function printfn() {
     var param = new Array();
     for (var i = 1; i < arguments.length; i++) {
         param.push(arguments[i]);
     }
-    Local.JS.JSIO.stdio.printfn(arguments[0], param);
+    __stdio__.printfn(arguments[0], param);
 }
-Local.JS.JSIO.stdio.SetIn(System.Console.In);
-Local.JS.JSIO.stdio.SetOut(System.Console.Out);
+__stdio__.SetIn(Console.In);
+__stdio__.SetOut(Console.Out);
