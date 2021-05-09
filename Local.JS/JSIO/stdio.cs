@@ -20,9 +20,15 @@ namespace Local.JS.JSIO
         {
             Out = sr;
         }
+        public static void ClearInputBuffer() => Input.Clear();
+        public static void fflush(TextWriter tw) => tw.Flush();
         public static void printfn(string Content, params object[] para)
         {
-            Out.Write(String.Format(Content, para));
+            Out.Write(string.Format(Content, para));
+        }
+        public static void print(string Content)
+        {
+            Out.Write(Content);
         }
         public static void printf(string Content, params object[] para)
         {

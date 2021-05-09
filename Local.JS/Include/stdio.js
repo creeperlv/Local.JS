@@ -14,12 +14,21 @@ function gets() {
 function scanf(format) {
     return __stdio__.scanf(format);
 }
+function print(content) {
+    __stdio__.print(content);
+}
 function printf() {
     var param = new Array();
     for (var i = 1; i < arguments.length; i++) {
         param.push(arguments[i]);
     }
     __stdio__.printf(arguments[0], param);
+}
+function flushIn() {
+    __stdio__.ClearInputBuffer();
+}
+function fflush() {
+    __stdio__.fflush();
 }
 function printfn() {
     var param = new Array();
