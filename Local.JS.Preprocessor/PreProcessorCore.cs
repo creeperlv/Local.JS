@@ -29,6 +29,8 @@ namespace Local.JS.Preprocessor
         public bool RemoveDefineMacro = true;
         public bool PreserveModuleInfoMacro = true;
         public bool PreserveExposeTypeMacro = true;
+        public bool DisposeSingleLineComment = true;
+        public bool PreserveSingleLineCommentInMainFile = true;
     }
     public class PreProcessorCore
     {
@@ -223,6 +225,10 @@ namespace Local.JS.Preprocessor
                     if (settings.RemoveAllMacros is true) willDisposeLine = true;
                     if (willDisposeLine)
                         continue;
+                }
+                else if (item.Trim().StartsWith("//"))
+                {
+                    isIgnore = settings.DisposeSingleLineComment && (!settings.PreserveSingleLineCommentInMainFile || isMainFile ==false);
                 }
                 if (isIgnore is not true)
                 {

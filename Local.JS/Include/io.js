@@ -7,3 +7,5 @@
 /// EXPOSETYPE DirectoryInfo System.IO.DirectoryInfo
 /// EXPOSETYPE Stream System.IO.Stream
 /// EXPOSETYPE FileStream System.IO.FileStream
+/// EXPOSETYPE TextWriter System.IO.TextWriter
+/// EXPOSETYPE TextReader System.IO.TextReader

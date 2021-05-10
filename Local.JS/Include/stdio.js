@@ -5,6 +5,10 @@
 /// DEFINE STDIO
 /// ENDIF
 /// EXPOSETYPE __stdio__ Local.JS.JSIO.stdio
+
+// This file aims on providing a library similar to `stdio.h` in C.
+// However, not all functions in `stdio.h` will be implemented here.
+
 function getc() {
     return __stdio__.getc();
 }
@@ -24,12 +28,16 @@ function printf() {
     }
     __stdio__.printf(arguments[0], param);
 }
+// Clear input buffer
 function flushIn() {
     __stdio__.ClearInputBuffer();
 }
+// Flush output.
 function fflush() {
     __stdio__.fflush();
 }
+// This function provides .Net style printf which uses string.Format() to perform formatted string output.
+// parameter: string:Format ... obj args
 function printfn() {
     var param = new Array();
     for (var i = 1; i < arguments.length; i++) {
