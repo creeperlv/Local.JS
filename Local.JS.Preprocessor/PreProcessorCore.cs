@@ -108,6 +108,7 @@ namespace Local.JS.Preprocessor
                 {
                     //Macro
                     var macro = item.Trim().Substring(3).Trim();
+                    if(macro=="") continue;
                     var m0 = CommandLineTool.Analyze(macro);
                     bool willDisposeLine = false;
                     switch (m0.RealParameter[0].EntireArgument.ToUpper())
@@ -228,7 +229,8 @@ namespace Local.JS.Preprocessor
                 }
                 else if (item.Trim().StartsWith("//"))
                 {
-                    isIgnore = settings.DisposeSingleLineComment && (!settings.PreserveSingleLineCommentInMainFile || isMainFile ==false);
+                    //isIgnore = settings.DisposeSingleLineComment && (!settings.PreserveSingleLineCommentInMainFile || isMainFile ==false);
+                    continue;
                 }
                 if (isIgnore is not true)
                 {
