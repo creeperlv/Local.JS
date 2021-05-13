@@ -54,6 +54,20 @@ namespace Local.JS.Preprocessor
                 {
                     settings.PreserveModuleInfoMacro = false;
                 }
+                else if (item.ToUpper() == "--PRESERVE-SINGLE-LINE-COMMENTS")
+                {
+                    settings.DisposeSingleLineComment = false;
+                }
+                else if (item.ToUpper() == "--NOT-PRESERVE-SINGLE-LINE-COMMENTS")
+                {
+                    settings.DisposeSingleLineComment = true;
+                }else if (item.ToUpper() == "--PRESERVE-SINGLE-LINE-COMMENTS-IN-MAIN-FILE")
+                {
+                    settings.PreserveSingleLineCommentInMainFile = true;
+                }else if (item.ToUpper() == "--NOT-PRESERVE-SINGLE-LINE-COMMENTS-IN-MAIN-FILE")
+                {
+                    settings.PreserveSingleLineCommentInMainFile = false;
+                }
                 else if (item.ToUpper() == "-DEFINE" || item.ToUpper() == "-DEF")
                 {
                     Flags.Add(args[i + 1]);
