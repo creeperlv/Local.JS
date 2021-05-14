@@ -169,6 +169,10 @@ namespace Local.JS
             if (SkipPreprocess == false)
             {
                 PreProcessorCore preProcessorCore = new PreProcessorCore(RealContent, new DirectoryInfo(Environment.CurrentDirectory), null);
+                ProcessSettings settings = new ProcessSettings();
+                settings.DisposeSingleLineComment = true;
+                settings.PreserveSingleLineCommentInMainFile = false;
+                preProcessorCore.SetProcessSettings(settings);
 #if DEBUG
                 Flags.Add("DEBUG");
 #endif

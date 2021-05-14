@@ -89,6 +89,7 @@ namespace Local.JS.Preprocessor
             }
 
             PreProcessorCore core = new PreProcessorCore(MainSource, di);
+            core.SetProcessSettings(settings);
             var content=core.Process(Flags);
             try
             {
