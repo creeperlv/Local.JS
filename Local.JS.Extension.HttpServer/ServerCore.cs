@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -19,11 +20,16 @@ namespace Local.JS.Extension.SimpleHttpServer
         static HttpListener httpListener;
         static List<string> Handlers = new();
         static List<string> Addresses = new();
+        static bool EnableRange = false;
         static int MaxJobs = 0;
         static Action<Exception> a = (e) => { Console.WriteLine(e); };
         static string ExceptionHandler = null;
         static string _ServerName = "Local.JS.Extension.HttpServer";
         public static string ServerName { get => _ServerName; }
+        public static void SetRangeAvailability(bool value)
+        {
+            EnableRange = value;
+        }
         public static void SetExceptionHandler(string ExceptionHandler)
         {
             ServerCore.ExceptionHandler = ExceptionHandler;
@@ -102,6 +108,10 @@ namespace Local.JS.Extension.SimpleHttpServer
         {
             context.Response.Headers.Remove(HttpResponseHeader.Server);
             context.Response.Headers.Set(HttpResponseHeader.Server, _ServerName);
+            if (EnableRange == true)
+                context.Response.AddHeader("Accept-Ranges", "bytes");
+            else
+                context.Response.AddHeader("Accept-Ranges", "none");
             if (MimeType is not null) context.Response.ContentType = MimeType;
             else if (Message.IndexOf("<html>") != -1)
             {
@@ -114,53 +124,189 @@ namespace Local.JS.Extension.SimpleHttpServer
             context.Response.OutputStream.Flush();
             context.Response.Close();
         }
-        public static void SendFile(HttpListenerContext context, FileInfo file, string MimeType = null)
+        public static void SendFile(HttpListenerContext context, FileInfo file, string MimeType = null, string PseudoPath = null)
         {
+
+            if (EnableRange == true)
+                context.Response.AddHeader("Accept-Ranges", "bytes");
+            else
+                context.Response.AddHeader("Accept-Ranges", "none");
             context.Response.Headers.Remove(HttpResponseHeader.Server);
             context.Response.Headers.Set(HttpResponseHeader.Server, _ServerName);
+            if (PseudoPath is null) PseudoPath = "" + file.FullName;
+            List<Range> ranges = new List<Range>(); string range = null;
             using (var fs = file.OpenRead())
             {
+                if (EnableRange == true)
+                    try
+                    {
+                        range = context.Request.Headers["Range"];
+                        if (range != null)
+                        {
+
+                            range = range.Trim();
+                            range = range.Substring(6);
+                            var rs = range.Split(',');
+                            foreach (var item in rs)
+                            {
+                                ranges.Add(Range.FromString(item));
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                    }
                 if (MimeType is not null) context.Response.ContentType = MimeType;
-                byte[] b = new byte[BUF_SIZE];
-                while (fs.Read(b, 0, BUF_SIZE) != -1)
+                else
                 {
-                    context.Response.OutputStream.Write(b);
-                    context.Response.OutputStream.Flush();
+                    var nameparts = PseudoPath.ToUpper().Split('.');
+                    if (nameparts.Last() == ".HTM" || nameparts.Last() == ".HTML")
+                    {
+                        context.Response.ContentType = "text/html";
+                    }
+                }
+                if (ranges.Count == 0)
+                {
+
+                    byte[] b = new byte[BUF_SIZE];
+                    while (fs.Read(b, 0, BUF_SIZE) != -1)
+                    {
+                        context.Response.OutputStream.Write(b);
+                        context.Response.OutputStream.Flush();
+                    }
+                }
+                else
+
+                {
+                    context.Response.StatusCode = 206;
+                    context.Response.StatusDescription = "Partial Content";
+                    var OriginalContentType = "Content-Type: " + context.Response.ContentType;
+                    context.Response.ContentType = "multipart/byteranges;";
+                    var NewLine = Environment.NewLine;
+                    foreach (var item in ranges)
+                    {
+                        context.Response.Headers.Add(HttpResponseHeader.ContentRange, "bytes " + item.ToString() + "/" + fs.Length);
+                        long length = 0;
+                        long L = 0;
+                        {
+                            //Calculate length to send and left-starting index.
+                            if (item.R == long.MinValue || item.R > fs.Length)
+                            {
+                                length = fs.Length - item.L;
+                            }
+                            else if (item.L == long.MinValue || item.L < 0)
+                            {
+                                length = item.R;
+                            }
+                            else
+                            {
+                                length = item.R - item.L;
+                            }
+                            if (item.L != long.MinValue)
+                            {
+                                L = item.L;
+                            }
+                        }
+                        fs.Seek(L, SeekOrigin.Begin);
+                        int _Length;
+                        byte[] buf = new byte[BUF_SIZE];
+                        while (L < length)
+                        {
+                            if (length - L > BUF_SIZE)
+                            {
+                                L += (_Length = fs.Read(buf, 0, BUF_SIZE));
+                            }
+                            else
+                            {
+                                L += (_Length = fs.Read(buf, 0, (int)(length - L)));
+                            }
+                            context.Response.OutputStream.Write(buf, 0, _Length);
+                            context.Response.OutputStream.Flush();
+                        }
+                        break;
+                    }
                 }
                 context.Response.OutputStream.Flush();
                 context.Response.Close();
             }
         }
+        public static void SendFile(HttpListenerContext context, FileInfo file, string MimeType = null)
+        {
+            SendFile(context, file, MimeType, null);
+        }
         public static void SendFile(HttpListenerContext context, IndexedFile.Index index, string MimeType = null)
         {
-            context.Response.Headers.Remove(HttpResponseHeader.Server);
-            context.Response.Headers.Set(HttpResponseHeader.Server, _ServerName);
-            using (var fs = index.CoreFile.OpenRead())
-            {
-                if (MimeType is not null) context.Response.ContentType = MimeType;
-                else
-                {
-                    var Presudo = index.PseudoLocation.ToUpper();
-                    if (Presudo.EndsWith(".HTM") || Presudo.EndsWith(".HTML"))
-                    {
-                        context.Response.ContentType = "text/html";
-                    }
-                }
-                byte[] b = new byte[BUF_SIZE];
-                while (fs.Read(b, 0, BUF_SIZE) != 0)
-                {
-                    context.Response.OutputStream.Write(b);
-                    context.Response.OutputStream.Flush();
-                }
-                context.Response.OutputStream.Flush();
-                context.Response.Close();
-            }
+            SendFile(context, index.CoreFile, null, index.PseudoLocation);
+            //context.Response.Headers.Remove(HttpResponseHeader.Server);
+            //context.Response.Headers.Set(HttpResponseHeader.Server, _ServerName);
+            //using (var fs = index.CoreFile.OpenRead())
+            //{
+            //    if (MimeType is not null) context.Response.ContentType = MimeType;
+            //    else
+            //    {
+            //        var Presudo = index.PseudoLocation.ToUpper();
+            //        if (Presudo.EndsWith(".HTM") || Presudo.EndsWith(".HTML"))
+            //        {
+            //            context.Response.ContentType = "text/html";
+            //        }
+            //    }
+            //    byte[] b = new byte[BUF_SIZE];
+            //    while (fs.Read(b, 0, BUF_SIZE) != 0)
+            //    {
+            //        context.Response.OutputStream.Write(b);
+            //        context.Response.OutputStream.Flush();
+            //    }
+            //    context.Response.OutputStream.Flush();
+            //    context.Response.Close();
+            //}
         }
         static TaskGroup tg;
         public static void Stop()
         {
             tg.Dispose();
             httpListener.Close();
+        }
+    }
+    public struct Range
+    {
+        public static Range Empty = new Range() { L = long.MinValue, R = long.MinValue };
+        public long L;
+        public long R;
+        public override string ToString()
+        {
+            if (L == long.MinValue)
+            {
+                if (R == long.MinValue)
+                    return $"-";
+                return $"-{R}";
+            }
+            else if (R == long.MinValue)
+                return $"{L}-";
+            else return $"{L}-{R}";
+        }
+        public override bool Equals(object obj)
+        {
+            if (obj is Range)
+            {
+                var item = (Range)obj;
+                return item.R == R && item.L == L;
+            }
+            else
+                return base.Equals(obj);
+        }
+        public static Range FromString(string str)
+        {
+            str = str.Trim();
+            var g = str.Split('-');
+            Range range = new Range();
+            if (g[0] == null || g[0] == "") range.L = long.MinValue; else range.L = long.Parse(g[0]);
+            if (g[1] == null || g[1] == "") range.R = long.MinValue; else range.R = long.Parse(g[1]);
+            return range;
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(L, R);
         }
     }
 }
