@@ -32,7 +32,7 @@ namespace Local.JS.JSIO
         }
         public static void printf(string Content, params object[] para)
         {
-            Out.Write(Content);
+            Out.Write(string.Format(Content,para));
         }
         public static char getc()
         {

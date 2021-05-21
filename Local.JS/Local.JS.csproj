@@ -9,7 +9,7 @@
 
   <ItemGroup>
     <PackageReference Include="CLUNL" Version="0.0.2.4" />
-    <PackageReference Include="Jint" Version="3.0.0-beta-2031" />
+    <PackageReference Include="Jint" Version="3.0.0-beta-2032" />
   </ItemGroup>
 
   <ItemGroup>
