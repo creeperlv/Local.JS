@@ -78,20 +78,20 @@ namespace Local.JS.Extension.IndexedFile
             return File.Exists(RealFile);
         }
         /// <summary>
-        /// List all indices whose psesudo location is start with given path.
+        /// List all indices whose pseudo location is start with given path.
         /// </summary>
-        /// <param name="PsesudoLocation"></param>
+        /// <param name="PseudoLocation"></param>
         /// <returns></returns>
-        public static List<Index> List(string PsesudoLocation)
+        public static List<Index> List(string PseudoLocation)
         {
             List<Index> indices = new List<Index>();
-            PsesudoLocation = UnifyPseudoLocation(PsesudoLocation);
-            PsesudoLocation = DirecotrizeLocation(PsesudoLocation);
+            PseudoLocation = UnifyPseudoLocation(PseudoLocation);
+            PseudoLocation = DirecotrizeLocation(PseudoLocation);
             foreach (var item in Installation00.PresentingInstallations)
             {
                 foreach (var _index in item.Indices)
                 {
-                    if (_index.PseudoLocation.ToUpper().StartsWith(PsesudoLocation.ToUpper()))
+                    if (_index.PseudoLocation.ToUpper().StartsWith(PseudoLocation.ToUpper()))
                     {
                         _index.ParentInstallation = item.FolderID;
                         indices.Add(_index);
@@ -103,13 +103,13 @@ namespace Local.JS.Extension.IndexedFile
         /// <summary>
         /// Get a file index by specifying 
         /// </summary>
-        /// <param name="PsesudoLocation"></param>
+        /// <param name="PseudoLocation"></param>
         /// <returns></returns>
-        public static Index Get(string PsesudoLocation)
+        public static Index Get(string PseudoLocation)
         {
 
             Index index = null;
-            var l = UnifyPseudoLocation(PsesudoLocation).ToUpper();
+            var l = UnifyPseudoLocation(PseudoLocation).ToUpper();
             foreach (var item in Installation00.PresentingInstallations)
             {
                 foreach (var _index in item.Indices)
@@ -137,31 +137,32 @@ namespace Local.JS.Extension.IndexedFile
         /// Store a reference to given file.
         /// </summary>
         /// <param name="RealFile"></param>
-        /// <param name="PsesudoLocation"></param>
-        public static void StoreRef(string RealFile, string PsesudoLocation)
+        /// <param name="PseudoLocation"></param>
+        public static void StoreRef(string RealFile, string PseudoLocation)
         {
             if (RealFile.StartsWith("~"))
             {
                 RealFile.Substring(1);
                 RealFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + RealFile;
             }
-            StoreRef(new FileInfo(RealFile), PsesudoLocation);
+            StoreRef(new FileInfo(RealFile), PseudoLocation);
         }
         /// <summary>
         /// Store a reference to given file.
         /// </summary>
         /// <param name="fi"></param>
-        /// <param name="PsesudoLocation"></param>
-        public static void StoreRef(FileInfo fi, string PsesudoLocation)
+        /// <param name="PseudoLocation"></param>
+        public static void StoreRef(FileInfo fi, string PseudoLocation)
         {
             var installation = Installation00.GetInstallation();
             var fileID = Guid.NewGuid();
-            PsesudoLocation = UnifyPseudoLocation(PsesudoLocation);
-            var i = Get(PsesudoLocation);
+            PseudoLocation = UnifyPseudoLocation(PseudoLocation);
+            var i = Get(PseudoLocation);
             if (i is not null)
             {
                 i.RealLocation = fi.FullName;
-            }else
+            }
+            else
             if (installation == Installation.Empty)
             {
                 installation = new Installation();
@@ -171,7 +172,7 @@ namespace Local.JS.Extension.IndexedFile
                 if (!Directory.Exists(folder)) Directory.CreateDirectory(folder);
                 Index index = new Index();
                 index.RealLocation = fi.FullName;
-                index.PseudoLocation = PsesudoLocation;
+                index.PseudoLocation = PseudoLocation;
                 installation.Indices.Add(index);
                 Installation00.PresentingInstallations.Add(installation);
                 TheArk.Installations.Add(installation.FolderID);
@@ -182,7 +183,7 @@ namespace Local.JS.Extension.IndexedFile
                 installation.Modified = true;
                 Index index = new Index();
                 index.RealLocation = fi.FullName;
-                index.PseudoLocation = PsesudoLocation;
+                index.PseudoLocation = PseudoLocation;
                 installation.Indices.Add(index);
             }
         }
@@ -190,29 +191,29 @@ namespace Local.JS.Extension.IndexedFile
         /// Store a copy of given file.
         /// </summary>
         /// <param name="RealFile"></param>
-        /// <param name="PsesudoLocation"></param>
-        public static void StoreCpy(string RealFile, string PsesudoLocation)
+        /// <param name="PseudoLocation"></param>
+        public static void StoreCpy(string RealFile, string PseudoLocation)
         {
             if (RealFile.StartsWith("~"))
             {
                 RealFile.Substring(1);
                 RealFile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile) + RealFile;
             }
-            StoreCpy(new FileInfo(RealFile), PsesudoLocation);
+            StoreCpy(new FileInfo(RealFile), PseudoLocation);
         }
         /// <summary>
         /// Store a copy of given file.
         /// </summary>
         /// <param name="fi"></param>
-        /// <param name="PsesudoLocation"></param>
-        public static void StoreCpy(FileInfo fi, string PsesudoLocation)
+        /// <param name="PseudoLocation"></param>
+        public static void StoreCpy(FileInfo fi, string PseudoLocation)
         {
-            PsesudoLocation = UnifyPseudoLocation(PsesudoLocation);
+            PseudoLocation = UnifyPseudoLocation(PseudoLocation);
             var installation = Installation00.GetInstallation();
             var fileID = Guid.NewGuid();
             {
-                var index = Get(PsesudoLocation);
-                if(index != null)
+                var index = Get(PseudoLocation);
+                if (index != null)
                 {
                     File.Copy(fi.FullName, index.RealLocation, true);
                     return;
@@ -228,7 +229,7 @@ namespace Local.JS.Extension.IndexedFile
                 var f = fi.CopyTo(Path.Combine(folder, fileID.ToString()));
                 Index index = new Index();
                 index.RealLocation = f.Name;
-                index.PseudoLocation = PsesudoLocation;
+                index.PseudoLocation = PseudoLocation;
                 installation.Indices.Add(index);
                 Installation00.PresentingInstallations.Add(installation);
                 TheArk.Installations.Add(installation.FolderID);
@@ -241,13 +242,13 @@ namespace Local.JS.Extension.IndexedFile
                 var f = fi.CopyTo(Path.Combine(folder, fileID.ToString()));
                 Index index = new Index();
                 index.RealLocation = f.Name;
-                index.PseudoLocation = PsesudoLocation;
+                index.PseudoLocation = PseudoLocation;
                 installation.Indices.Add(index);
             }
         }
-        public static void DeleteFile(string PsesudoLocation)
+        public static void DeleteFile(string PseudoLocation)
         {
-            var index = Get(PsesudoLocation);
+            var index = Get(PseudoLocation);
             if (index is not null)
             {
                 index.CoreFile.Delete();
@@ -255,6 +256,28 @@ namespace Local.JS.Extension.IndexedFile
                 installation.Indices.Remove(index);
                 installation.Modified = true;
             }
+        }
+        /// <summary>
+        /// Rename an index with given pseudo location. Note: must manually call SaveIndeics() to take effect.
+        /// </summary>
+        /// <param name="OldPseudoLocation"></param>
+        /// <param name="NewPseudoLocation"></param>
+        public static void Rename(string OldPseudoLocation, string NewPseudoLocation)
+        {
+
+            var N = UnifyPseudoLocation(NewPseudoLocation).ToUpper();
+            var i = Get(OldPseudoLocation);
+            i.PseudoLocation = N;
+        }
+        /// <summary>
+        /// Rename the index with given pseudo location. Note: must manually call SaveIndeics() to take effect.
+        /// </summary>
+        /// <param name="NewPseudoLocation"></param>
+        public void Rename(string NewPseudoLocation)
+        {
+
+            var N = UnifyPseudoLocation(NewPseudoLocation).ToUpper();
+            PseudoLocation = N;
         }
         public static void SaveIndeics()
         {
