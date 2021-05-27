@@ -26,6 +26,7 @@ namespace Local.JS
             bool SkipPreprocess = false;
             bool ShowInfo = false;
             bool willExecute = true;
+            bool ShowContent = false;
             string EntryPoint = null;
             StringBuilder Content = new();
             List<Assembly> assemblies = new();
@@ -135,6 +136,9 @@ namespace Local.JS
                 else if (item.ToUpper() == "--NOEXECUTE")
                 {
                     willExecute = false;
+                }else if (item.ToUpper() == "--SHOW-FINAL-SCRIPT")
+                {
+                    ShowContent = true;
                 }
                 else if (item.ToUpper() == "--NOPREPROCESS")
                 {
@@ -300,6 +304,10 @@ namespace Local.JS
                     Console.WriteLine("No Info to View");
                     Console.WriteLine("<<Warning End<<");
                 }
+            }
+            if (ShowContent == true)
+            {
+                Console.WriteLine(RealContent);
             }
             if (willExecute == false)
             {

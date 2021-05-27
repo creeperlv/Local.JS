@@ -94,6 +94,7 @@ namespace Local.JS.Preprocessor
             }
             return null;
         }
+
         internal string RealProcess(string[] lines, bool isMainFile)
         {
             StringBuilder stringBuilder = new StringBuilder();
@@ -142,7 +143,7 @@ namespace Local.JS.Preprocessor
                                             break;
                                         default:
                                             {
-                                                info.Flags.Add(Key);
+                                                this.info.Flags.Add(Key);
                                             }
                                             break;
                                     }
@@ -180,11 +181,12 @@ namespace Local.JS.Preprocessor
                             break;
                         case "IFDEF":
                             {
-                                foreach (var flag in info.Flags)
+                                isIgnore = true;
+                                foreach (var flag in this.info.Flags)
                                 {
                                     if (m0.RealParameter[1].EntireArgument == flag)
                                     {
-                                        isIgnore = true;
+                                        isIgnore = false;
                                         break;
                                     }
                                 }
@@ -197,12 +199,12 @@ namespace Local.JS.Preprocessor
                             break;
                         case "IFNDEF":
                             {
-                                isIgnore = true;
-                                foreach (var flag in info.Flags)
+                                isIgnore = false;
+                                foreach (var flag in this.info.Flags)
                                 {
                                     if (m0.RealParameter[1].EntireArgument == flag)
                                     {
-                                        isIgnore = false;
+                                        isIgnore = true;
                                         break;
                                     }
                                 }
@@ -259,14 +261,14 @@ namespace Local.JS.Preprocessor
             {
                 info = new JSInfo();
                 if (PreDefinedFlags is not null)
-                    info.Flags = PreDefinedFlags;
+                    this.info.Flags = PreDefinedFlags;
                 return Process(MainSourceFile, true);
             }
             else if (ScriptContent is not null)
             {
                 info = new JSInfo();
                 if (PreDefinedFlags is not null)
-                    info.Flags = PreDefinedFlags;
+                    this.info.Flags = PreDefinedFlags;
                 return Process(ScriptContent, true);
             }
             else throw new Exception("No input");
