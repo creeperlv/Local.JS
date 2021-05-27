@@ -36,10 +36,15 @@ namespace Local.JS
         {
             Content.Clear();
         }
-        
+
+        [Obsolete]
         public object ObtainLastObject()
         {
             return Engine.GetCompletionValue().ToObject();
+        }
+        public object Evaluate(string script)
+        {
+            return Engine.Evaluate(script).ToObject();
         }
         public void Execute()
         {

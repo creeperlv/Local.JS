@@ -7,11 +7,13 @@
 var window = new Object();
 /// ENDIF
 window.alert = alert;
-window.prompt = function prompt(text, value) {
-    alert("INPUT<<<<");
-    alert(text);
-    alert("Default Value:"+text);
+function prompt(text, value) {
+    alert("=INPUT====");
+    alert("=" + text);
+    alert("=Default Value:" + value);
     var a = Console.ReadLine();
     if (a == "") return value;
     else return a;
 };
+
+window.prompt = prompt;
