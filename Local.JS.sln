@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{5630
 		Samples\SimpleWebServer.js = Samples\SimpleWebServer.js
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Local.JS.Extension.TerminalGUI", "Local.JS.Extension.TerminalGUI\Local.JS.Extension.TerminalGUI.csproj", "{7239A7EE-734E-4BE3-B9E5-25B98619650F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{01C1976D-9713-455A-B835-F96024CE9104}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01C1976D-9713-455A-B835-F96024CE9104}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01C1976D-9713-455A-B835-F96024CE9104}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7239A7EE-734E-4BE3-B9E5-25B98619650F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7239A7EE-734E-4BE3-B9E5-25B98619650F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7239A7EE-734E-4BE3-B9E5-25B98619650F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7239A7EE-734E-4BE3-B9E5-25B98619650F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -18,6 +18,7 @@
     <ProjectReference Include="..\Local.JS.Extension.BatchedMultiTask\Local.JS.Extension.BatchedMultiTask.csproj" />
     <ProjectReference Include="..\Local.JS.Extension.HttpServer\Local.JS.Extension.HttpServer.csproj" />
     <ProjectReference Include="..\Local.JS.Extension.IndexedFile\Local.JS.Extension.IndexedFile.csproj" />
+    <ProjectReference Include="..\Local.JS.Extension.TerminalGUI\Local.JS.Extension.TerminalGUI.csproj" />
     <ProjectReference Include="..\Local.JS.Preprocessor\Local.JS.Preprocessor.csproj" />
   </ItemGroup>
 
