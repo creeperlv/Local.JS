@@ -5,6 +5,7 @@
 /// USING DLL Terminal.Gui.dll
 /// EXPOSETYPE TGUI Local.JS.Extension.TerminalGUI.GUICS
 /// EXPOSETYPE Dim Terminal.Gui.Dim
+/// EXPOSETYPE Pos Terminal.Gui.Pos
 var TerminalGUIInited = false;
 function InitGUI() {
     TGUI.Init();
