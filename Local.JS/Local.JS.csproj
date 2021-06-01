@@ -44,6 +44,9 @@
     <None Update="Include\stdio.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Include\tgui.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Include\window.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

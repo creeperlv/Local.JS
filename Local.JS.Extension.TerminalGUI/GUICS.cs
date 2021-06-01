@@ -33,6 +33,7 @@ namespace Local.JS.Extension.TerminalGUI
             Application.Init();
             CurrentTopLevel = Application.Top;
         }
+        public static void Run() => Application.Run();
         public static Toplevel GetTop() => CurrentTopLevel;
         public static Window CreateNewWindow(string Title,int X,int Y,Dim Width,Dim Height)
         {
