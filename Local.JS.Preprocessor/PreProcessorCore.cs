@@ -105,11 +105,18 @@ namespace Local.JS.Preprocessor
             for (int i = 0; i < lines.Length; i++)
             {
                 var item = lines[i];
-                if (item.Trim().StartsWith("///"))
+                if (item.Trim().StartsWith("///") || item.Trim().StartsWith("#"))
                 {
                     //Macro
-                    var macro = item.Trim().Substring(3).Trim();
-                    if(macro=="") continue;
+
+                    var macro = item.Trim();
+                    if (item.Trim().StartsWith("///"))
+                    {
+                        macro = macro.Substring(3).Trim();
+                    }
+                    else
+                        macro = macro.Substring(1).Trim();
+                    if (macro == "") continue;
                     var m0 = CommandLineTool.Analyze(macro);
                     bool willDisposeLine = false;
                     switch (m0.RealParameter[0].EntireArgument.ToUpper())

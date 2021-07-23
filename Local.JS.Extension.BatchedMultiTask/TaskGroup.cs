@@ -2,11 +2,12 @@
 using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Local.JS.Extension.BatchedMultiTask
 {
-    public class TaskGroup:IDisposable
+    public class TaskGroup : IDisposable
     {
         int Limit = -1;
         TaskGroup(int MaxParallelTasks)
@@ -45,8 +46,8 @@ namespace Local.JS.Extension.BatchedMultiTask
                 try
                 {
                     if (Disposed) return;
-                    var t=task.DynamicInvoke();
-                    if(t is Task)
+                    var t = task.DynamicInvoke();
+                    if (t is Task)
                     {
                         (t as Task).Wait();
                     }
@@ -69,6 +70,8 @@ namespace Local.JS.Extension.BatchedMultiTask
                 }
             });
         }
+        static TaskGroup DefaultTaskGroup = CreateTaskGroup(0, (e) => { Trace.WriteLine(e); });
+        public static TaskGroup GetDefaultTaskGroup() => DefaultTaskGroup;
         public static TaskGroup CreateTaskGroup(int MaxParallelTasks, Action<Exception> ExceptionHandler)
         {
             int Count = MaxParallelTasks;
@@ -80,7 +83,7 @@ namespace Local.JS.Extension.BatchedMultiTask
             taskGroup.ExceptionHandler = ExceptionHandler;
             return taskGroup;
         }
-        bool Disposed=false;
+        bool Disposed = false;
         public void Dispose()
         {
             Disposed = true;

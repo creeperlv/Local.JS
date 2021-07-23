@@ -66,7 +66,7 @@ namespace Local.JS.Extension.SimpleHttpServer
         {
             _ServerName += "/" + typeof(ServerCore).Assembly.GetName().Version;
             httpListener = new HttpListener();
-            tg = TaskGroup.CreateTaskGroup(MaxJobs, (a) => { if (ExceptionHandler is not null) { ExecutingEngine.Invoke(ExceptionHandler, a); } else { Console.WriteLine(a); } });
+            tg=TaskGroup.GetDefaultTaskGroup();//= TaskGroup.CreateTaskGroup(MaxJobs, (a) => { if (ExceptionHandler is not null) { ExecutingEngine.Invoke(ExceptionHandler, a); } else { Console.WriteLine(a); } });
             foreach (var item in Addresses)
             {
                 httpListener.Prefixes.Add(item);
@@ -237,28 +237,6 @@ namespace Local.JS.Extension.SimpleHttpServer
         public static void SendFile(HttpListenerContext context, IndexedFile.Index index, string MimeType = null)
         {
             SendFile(context, index.CoreFile, null, index.PseudoLocation);
-            //context.Response.Headers.Remove(HttpResponseHeader.Server);
-            //context.Response.Headers.Set(HttpResponseHeader.Server, _ServerName);
-            //using (var fs = index.CoreFile.OpenRead())
-            //{
-            //    if (MimeType is not null) context.Response.ContentType = MimeType;
-            //    else
-            //    {
-            //        var Presudo = index.PseudoLocation.ToUpper();
-            //        if (Presudo.EndsWith(".HTM") || Presudo.EndsWith(".HTML"))
-            //        {
-            //            context.Response.ContentType = "text/html";
-            //        }
-            //    }
-            //    byte[] b = new byte[BUF_SIZE];
-            //    while (fs.Read(b, 0, BUF_SIZE) != 0)
-            //    {
-            //        context.Response.OutputStream.Write(b);
-            //        context.Response.OutputStream.Flush();
-            //    }
-            //    context.Response.OutputStream.Flush();
-            //    context.Response.Close();
-            //}
         }
         static TaskGroup tg;
         public static void Stop()
