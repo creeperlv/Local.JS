@@ -186,6 +186,25 @@ namespace Local.JS.Preprocessor
                                 }
                             }
                             break;
+                        case "INCLUDE":
+                            {
+
+                                if (isIgnore is not true)
+                                {
+                                    var f = FindJS(m0.RealParameter[1].EntireArgument);
+                                    if (f is not null)
+                                    {
+                                        item = Process(f, false);
+                                        stringBuilder.Append(item);
+                                        continue;// Force skip this to avoid duplicate code.
+                                    }
+                                    else
+                                    {
+                                        throw new Exception("Target JS file not found:" + m0.RealParameter[2].EntireArgument);
+                                    }
+                                }
+                            }
+                            break;
                         case "IFDEF":
                             {
                                 isIgnore = true;
@@ -243,7 +262,16 @@ namespace Local.JS.Preprocessor
                 }
                 if (isIgnore is not true)
                 {
-                    stringBuilder.Append(item);
+                    if (item.Trim().StartsWith("#"))
+                    {
+                        stringBuilder.Append("///");
+                        stringBuilder.Append(item.Trim().Substring(1));
+                    }
+                    else
+                    {
+                        stringBuilder.Append(item);
+
+                    }
                     stringBuilder.Append(Environment.NewLine);
                 }
             }
