@@ -13,6 +13,7 @@ namespace Local.JS.Preprocessor
             List<string> Flags = new List<string>();
             string Output=null;
             ProcessSettings settings = new ProcessSettings();
+            bool ExcludeBundledIncludes = false;
             for (int i = 0; i < args.Length; i++)
             {
                 var item = args[i];
@@ -21,6 +22,9 @@ namespace Local.JS.Preprocessor
                     di.Add(new DirectoryInfo(args[i + 1]));
                     i++;
 
+                }else if (item.ToUpper() == "--DO-NOT-USE-BUNDLED-INCLUDES")
+                {
+                    ExcludeBundledIncludes = true;
                 }
                 else if (item.ToUpper() == "--REMOVE-ALL-MACROS")
                 {
@@ -87,7 +91,10 @@ namespace Local.JS.Preprocessor
             {
                 Output = Path.Combine(MainSource.Directory.FullName, "_" + MainSource.Name);
             }
-
+            if (!ExcludeBundledIncludes)
+            {
+                di.Add((new FileInfo(typeof(Program).Assembly.Location)).Directory);
+            }
             PreProcessorCore core = new PreProcessorCore(MainSource, di);
             core.SetProcessSettings(settings);
             var content=core.Process(Flags);

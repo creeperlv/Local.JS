@@ -172,7 +172,10 @@ namespace Local.JS
             JSInfo info = null;
             if (SkipPreprocess == false)
             {
-                PreProcessorCore preProcessorCore = new PreProcessorCore(RealContent, new DirectoryInfo(Environment.CurrentDirectory), null);
+                var di = new List<DirectoryInfo>();
+
+                di.Add((new FileInfo(typeof(Program).Assembly.Location)).Directory);
+                PreProcessorCore preProcessorCore = new PreProcessorCore(RealContent, new DirectoryInfo(Environment.CurrentDirectory), di);
                 ProcessSettings settings = new ProcessSettings();
                 settings.DisposeSingleLineComment = true;
                 settings.PreserveSingleLineCommentInMainFile = false;
