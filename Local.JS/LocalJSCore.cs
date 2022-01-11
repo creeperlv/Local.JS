@@ -55,6 +55,20 @@ namespace Local.JS
             var result=Engine.Invoke(FunctionName, parameters);
             return result;
         }
+        public Delegate ObtainFunc(string name)
+        {
+            Func<JsValue[], object> d = (JsValue[] para) => {
+                return Engine.Invoke(name, para);
+            };
+            return d;
+        }
+        public Delegate ObtainActionT0(string name)
+        {
+            Action d = () => {
+                Engine.Invoke(name);
+            };
+            return d;
+        }
         public void ExposeType(string Name, Type t)
         {
             Engine.SetValue(Name, TypeReference.CreateTypeReference(Engine, t));

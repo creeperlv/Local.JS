@@ -77,11 +77,17 @@ namespace Local.JS.Extension.TerminalGUI
         {
             return CreateButton(Content,Pos.At(X),Pos.At(Y),W,H,act);
         }
+        public static void Shutdown()
+        {
+            CurrentTopLevel.Running = false;
+        }
         public static Button CreateButton(string Content,Pos X,Pos Y,Dim W, Dim H,Delegate act)
         {
-            Button button = new Button();
-            button.Text = Content;
-            if(W is not null)
+            Button button = new Button
+            {
+                Text = Content
+            };
+            if (W is not null)
             button.Width = W;
             if(H is not null)
             button.Height = H;
